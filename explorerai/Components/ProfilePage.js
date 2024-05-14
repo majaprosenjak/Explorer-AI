@@ -15,20 +15,20 @@ const ProfilePage = () => {
         signOut(auth)
             .then(() => {
                 setCurrentUser(null);
-                Alert.alert("Success", "You have been signed out.");
+                Alert.alert("Odjava", "Uspešno ste se odjavili.");
                 console.log("User signed out");
             })
             .catch((error) => {
                 console.error(`Error signing out: ${error.code} - ${error.message}`);
-                Alert.alert("Error", `Error signing out: ${error.message}`);
+                Alert.alert("Napaka", `Napaka pri odjavi: ${error.message}`);
             });
     };
     return (
         <View style={styles.container}>
             {currentUser ? (
                 <View>
-                    <Text>Pozdravljen, {currentUser.email}!</Text>
-                    <Button style={styles.footerButton} title="Sign Out" onPress={handleSignOut} />
+                    <Text>Pozdravljeni, {currentUser.email}!</Text>
+                    <Button style={styles.footerButton} title="Odjava" onPress={handleSignOut} />
                 </View>
             ) : (
                 <LoginScreen onUserLoggedIn={setCurrentUser} />

@@ -15,7 +15,7 @@ const TextDetectionComponent = () => {
   const analyzeImage = async () => {
     try {
       if (!imageUri) {
-        alert('Please select an image or take a photo first.');
+        alert('Najprej izberite sliko.');
         return;
       }
 
@@ -50,11 +50,11 @@ const TextDetectionComponent = () => {
         console.log(detectedText)
       } else {
         setDetectedText('');
-        setTranslatedText(''); // Reset translated text if no text detected
+        setTranslatedText(''); 
       }
     } catch (error) {
-      console.error('Error analyzing image:', error);
-      alert('Error analyzing image. Please try again later.');
+      console.error('Napaka pri analizi slike:', error);
+      alert('Napaka pri analizi slike. Poskusite znova.');
     }
   };
 
@@ -68,14 +68,12 @@ const TextDetectionComponent = () => {
     try {
         const API_KEY = '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';
 
-        // Replace newline characters with spaces
+        
         const textWithoutNewlines = detectedText.replace(/\n/g, ' ');
 
-        // Now you have the entire text as one paragraph without splitting
-        // You can directly translate the entire paragraph
-        const trimmedText = textWithoutNewlines.trim(); // Remove leading/trailing whitespace
+        const trimmedText = textWithoutNewlines.trim(); 
         console.log(trimmedText);
-        if (trimmedText) { // Check if the text is not empty
+        if (trimmedText) { 
             const response = await axios.post(
                 'https://api.openai.com/v1/chat/completions',
                 {
@@ -98,16 +96,16 @@ const TextDetectionComponent = () => {
                 const translatedContent = response.data.choices[0].message.content;
                 setTranslatedText(translatedContent);
             } else {
-                alert('Translation failed. Please try again later.');
+                alert('Napaka pri prevajanju. Poskusite znova.');
             }
         } else {
-            alert('Text is empty.');
+            alert('Ni zaznanega besedila.');
         }
 
         Keyboard.dismiss();
     } catch (error) {
-        console.error('Error translating text:', error);
-        alert('Error translating text. Please try again later.');
+        console.error('Napaka pri prevajanju:', error);
+        alert('Napaka pri prevajanju. Poskusite znova.');
     }
 };
 
@@ -124,38 +122,45 @@ const pickImage = async () => {
         });
 
         if (result === null) {
-            // Handle case where the result is null (user canceled or encountered an error)
-            console.log('Image picking canceled or encountered an error.');
+            console.log('Izbiranje slike je bilo prekinjeno.');
             return;
         }
 
         if (!result.cancelled) {
             setImageUri(result.assets[0].uri);
         } else {
-            console.log('Image picking canceled by the user.');
+            console.log('Izbiranje slike je bilo prekinjeno.');
         }
     } catch (error) {
-        console.error('Error picking image:', error);
-        alert('Error picking image. Please try again later.');
+        console.error('Napaka pri izbiranju slike:', error);
+        alert('Napaka pri izbiranju slike. Poskusite znova.');
     }
 };
 
-  const takePhoto = async () => {
-    // Function implementation
-  };
+const takePhoto = async () => {
+  try {
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  const handleButtonClick = () => {
-    console.log('Button clicked. Selected language:', toLanguage);
-    translateTextAutomatically();
-    // Call other functions if needed
+    if (!result.cancelled) {
+      setImageUri(result.assets[0].uri);
+    }
+  } catch (error) {
+    console.error('Error taking photo:', error);
+  }
 };
+
+  
 
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 50 }}>
-      <Button title="Pick Image" onPress={pickImage} />
-      <Button title="Take Photo" onPress={takePhoto} />
-      <Button title="Analyze Image" onPress={analyzeImage} />
+      <Button title="Izberi sliko" onPress={pickImage} />
+      <Button title="Odpri kamero" onPress={takePhoto} />
+      <Button title="Analiziraj sliko" onPress={analyzeImage} />
       <DropDownPicker
                 open={openFrom}
                 value={toLanguage}
@@ -173,7 +178,7 @@ const pickImage = async () => {
                     }
                 }}
             />
-            <Button title="test" onPress={handleButtonClick} />
+            <Button title="Prevedi" onPress={translateTextAutomatically} />
 
 
       {imageUri && (

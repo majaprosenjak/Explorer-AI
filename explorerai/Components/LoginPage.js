@@ -21,12 +21,12 @@ const LoginScreen = ({ onUserLoggedIn }) => {
 
     const handleAuth = () => {
         if (!isValidEmail(email)) {
-            Alert.alert("Error", "Please enter a valid email address.");
+            Alert.alert("Napaka", "Vnesite veljaven e-mail.");
             return;
         }
 
         if (!password) {
-            Alert.alert("Error", "Please enter a password.");
+            Alert.alert("Napaka", "Vnesite pravilno geslo.");
             return;
         }
 
@@ -41,7 +41,7 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     console.error(`Error creating user: ${errorCode} - ${errorMessage}`);
-                    Alert.alert("Error", `Error creating user: ${errorMessage}`);
+                    Alert.alert("Napaka", `Napaka pri ustvarjanju uporabnika: ${errorMessage}`);
                 });
         } else {
             signInWithEmailAndPassword(auth, email, password)
@@ -54,7 +54,7 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     console.error(`Error logging in user: ${errorCode} - ${errorMessage}`);
-                    Alert.alert("Error", `Error logging in user: ${errorMessage}`);
+                    Alert.alert("Napaka", `Napaka pri prijavi uporabnika: ${errorMessage}`);
                 });
         }
     };
@@ -63,14 +63,15 @@ const LoginScreen = ({ onUserLoggedIn }) => {
     return (
         <View style={styles.container}>
 
-            <Text style={styles.naslov} >Prijava in Registracija</Text>
-
+            <Text style={styles.naslov}>
+                {isSigningUp ? "Registracija" : "Prijava"}
+            </Text>
             <Text>Email</Text>
             <TextInput
                 style={styles.input}
                 onChangeText={setEmail}
                 value={email}
-                placeholder="Enter email"
+                placeholder="E-mail"
             />
             <Text>Password</Text>
             <TextInput
@@ -78,10 +79,10 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                 onChangeText={setPassword}
                 value={password}
                 secureTextEntry={true}
-                placeholder="Enter password"
+                placeholder="Geslo"
             />
-            <Button title={isSigningUp ? "Sign Up!" : "Login"} onPress={handleAuth} />
-            <Button title={isSigningUp ? "Switch to Login" : "Switch to Sign Up"} onPress={() => setIsSigningUp(!isSigningUp)} />
+            <Button title={isSigningUp ? "Registracija" : "Prijava"} onPress={handleAuth} />
+            <Button title={isSigningUp ? "Pojdi na prijavo" : "Pojdi na registracijo"} onPress={() => setIsSigningUp(!isSigningUp)} />
         </View>
     );
 };
