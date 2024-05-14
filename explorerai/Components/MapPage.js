@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
+import { StyleSheet, View, Alert, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { markers } from './markers';
 
@@ -11,12 +11,14 @@ const INITIAL_REGION = {
 };
 
 const onMarkerClick = (marker) => {
-  Alert.alert(marker.name);
+  Alert.alert(marker.name, marker.description);
 };
+
 
 const MapPage = () => {
   return (
     <View style={styles.container}>
+      <Text>Zemljevid atrakcij</Text>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -35,6 +37,7 @@ const MapPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF5FC',
   },
   map: {
     width: '100%',

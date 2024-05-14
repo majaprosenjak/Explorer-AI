@@ -62,6 +62,9 @@ const LoginScreen = ({ onUserLoggedIn }) => {
     
     return (
         <View style={styles.container}>
+
+            <Text style={styles.naslov} >Prijava in Registracija</Text>
+
             <Text>Email</Text>
             <TextInput
                 style={styles.input}
@@ -86,7 +89,7 @@ const LoginScreen = ({ onUserLoggedIn }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#EDF5FC",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -97,6 +100,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
     },
+    naslov: {
+        fontSize: 20,
+        justifyContent: "center",
+        fontWeight: 'bold',
+    }
 });
 
 export default LoginScreen;
