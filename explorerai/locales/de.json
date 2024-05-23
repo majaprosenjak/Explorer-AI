@@ -1,0 +1,17 @@
+{
+    "change-language": "Sprache ändern",
+    "welcome": "Willkommen bei ExplorerAI!",
+    "home-page": "Startseite",
+    "routes": "Wege",
+    "profile": "Profil",
+    "user-profile": "Benutzerprofil",
+    "registration": "Registrierung",
+    "go-to-registration": "Gehe zur Registrierung",
+    "login": "Anmeldung",
+    "go-to-login": "Gehe zur Anmeldung",
+    "password": "Passwort",
+    "monuments-map": "Karte der Attraktionen",
+    "map": "Karte",
+    "error": "Fehler",
+    "correct-email": "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+}

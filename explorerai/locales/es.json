@@ -1,0 +1,17 @@
+{
+    "change-language": "Cambiar idioma",
+    "welcome": "Bienvenidos a ExplorerAI",
+    "home-page": "Página de inicio",
+    "routes": "Rutas",
+    "profile": "Perfil",
+    "user-profile": "Perfil de Usuario",
+    "registration": "Registro",
+    "go-to-registration": "Ir al registro",
+    "login": "Login",
+    "go-to-login": "Ir al login",
+    "password": "Contraseña",
+    "monuments-map": "Zemljevid atrakcij",
+    "map": "Mapa de Atracciones",
+    "error": "Error",
+    "correct-email": "Introduzca un correo electrónico válido."
+}

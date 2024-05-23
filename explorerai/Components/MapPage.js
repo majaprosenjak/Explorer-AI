@@ -18,7 +18,6 @@ const onMarkerClick = (marker) => {
 const MapPage = () => {
   return (
     <View style={styles.container}>
-      <Text>Zemljevid atrakcij</Text>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}

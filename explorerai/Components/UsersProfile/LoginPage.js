@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { app } from "../firebaseConfig";
 import { addDoc, collection } from 'firebase/firestore';
 import { firestore } from '../firebaseConfig'; 
-
+import { useTranslation } from "react-i18next";
 
 const auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage)
@@ -15,6 +15,8 @@ const LoginScreen = ({ onUserLoggedIn }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isSigningUp, setIsSigningUp] = useState(true);
+
+    const {t} = useTranslation();
 
     const isValidEmail = (email) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,7 +74,7 @@ const LoginScreen = ({ onUserLoggedIn }) => {
         <View style={styles.container}>
 
             <Text style={styles.naslov}>
-                {isSigningUp ? "Registracija" : "Prijava"}
+                {isSigningUp ? t('registration') : t('login')}
             </Text>
             <Text>E-mail</Text>
             <TextInput
@@ -81,19 +83,19 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                 value={email}
                 placeholder="E-mail"
             />
-            <Text>Geslo</Text>
+            <Text>{t('password')}</Text>
             <TextInput
                 style={styles.input}
                 onChangeText={setPassword}
                 value={password}
                 secureTextEntry={true}
-                placeholder="Geslo"
+                placeholder={t('password')}
             />
             <TouchableOpacity  onPress={handleAuth} style={styles.button}>
-                <Text style={styles.buttonText}>{isSigningUp ? "Registracija" : "Prijava"}</Text>
+                <Text style={styles.buttonText}>{isSigningUp ? t('registration') : t('login')}</Text>
             </TouchableOpacity>
             <TouchableOpacity  onPress={() => setIsSigningUp(!isSigningUp)} style={styles.button}>
-                <Text style={styles.buttonText}>{isSigningUp ? "Pojdi na prijavo" : "Pojdi na registracijo"}</Text>
+                <Text style={styles.buttonText}>{isSigningUp ? t('go-to-login') : t('go-to-registration')}</Text>
             </TouchableOpacity>
             
         </View>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Alert, Text, TouchableOpacity, Button, Modal, FlatList } from 'react-native';
-import TextDetectionComponent from '../TextTranslationPage';
 import i18next, { languageResources } from '../../services/i18next';
 import { useTranslation } from 'react-i18next';
 import languagesList from '../../services/languagesList.json';

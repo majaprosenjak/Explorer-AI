@@ -11,6 +11,7 @@ import TextDetectionComponent from './Components/UsersProfile/TextTranslation/Te
 import AddRoutePage from './Components/UsersProfile/AddRoute/AddRoutePage';
 import UserRoutesPage from './Components/UsersProfile/UsersRoutes/UserRoutesPage';
 import { UserProvider } from './Components/UsersProfile/UserContext';  
+import { useTranslation } from 'react-i18next';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -29,21 +30,21 @@ function App() {
             <Tab.Screen name="ExplorerAI">
               {() => (
                 <SettingsStack.Navigator>
-                  <SettingsStack.Screen name="Domača stran" component={HomePage} />
+                  <SettingsStack.Screen name={t('home-page')} component={HomePage} />
                 </SettingsStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name="Poti">
+            <Tab.Screen name={t('routes')}>
               {() => (
                 <HomeStack.Navigator>
-                  <HomeStack.Screen name="Zemljevid atrakcij" component={MapPage} />
+                  <HomeStack.Screen name={t('monuments-map')} component={MapPage} />
                 </HomeStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name="Profil">
+            <Tab.Screen name={t('profile')}>
               {() => (
                 <ProfileStack.Navigator>
-                  <ProfileStack.Screen name="Profil uporabnika" component={ProfilePage} />
+                  <ProfileStack.Screen name={t('user-profile')} component={ProfilePage} />
                   <ProfileStack.Screen name="Statistika" component={UserStatistics} />
                   <ProfileStack.Screen name="Dodaj pot" component={AddRoutePage} />
                   <ProfileStack.Screen name="Uporabnikove poti" component={UserRoutesPage} />
