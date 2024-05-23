@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword,initializeAuth, getReactNativePersistence } from "firebase/auth";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { app } from "./firebaseConfig";
+import { app } from "../firebaseConfig";
+import { addDoc, collection } from 'firebase/firestore';
+import { firestore } from '../firebaseConfig'; 
+
 
 const auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage)
@@ -14,7 +17,6 @@ const LoginScreen = ({ onUserLoggedIn }) => {
     const [isSigningUp, setIsSigningUp] = useState(true);
 
     const isValidEmail = (email) => {
-        // email validation 
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
     };
@@ -35,13 +37,19 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                 .then(userCredential => {
                     const user = userCredential.user;
                     console.log(`User created: ${user.email}`);
+                    const userData = {
+                        email: user.email,
+                        // Add any additional user data you want to store
+                      };
+                    addDoc(collection(firestore, 'users'), userData);
                     onUserLoggedIn(user);
+
                 })
                 .catch(error => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    console.error(`Error creating user: ${errorCode} - ${errorMessage}`);
-                    Alert.alert("Napaka", `Napaka pri ustvarjanju uporabnika: ${errorMessage}`);
+                    console.log(`Error creating user: ${errorCode} - ${errorMessage}`);
+                    Alert.alert("Napaka", `Napaka pri ustvarjanju uporabnika. Poskusite znova.`);
                 });
         } else {
             signInWithEmailAndPassword(auth, email, password)
@@ -53,8 +61,8 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                 .catch(error => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    console.error(`Error logging in user: ${errorCode} - ${errorMessage}`);
-                    Alert.alert("Napaka", `Napaka pri prijavi uporabnika: ${errorMessage}`);
+                    console.log(`Error logging in user: ${errorCode} - ${errorMessage}`);
+                    Alert.alert("Napaka", `Napaka pri prijavi uporabnika. Preverite prijavne podatke.`);
                 });
         }
     };
@@ -66,14 +74,14 @@ const LoginScreen = ({ onUserLoggedIn }) => {
             <Text style={styles.naslov}>
                 {isSigningUp ? "Registracija" : "Prijava"}
             </Text>
-            <Text>Email</Text>
+            <Text>E-mail</Text>
             <TextInput
                 style={styles.input}
                 onChangeText={setEmail}
                 value={email}
                 placeholder="E-mail"
             />
-            <Text>Password</Text>
+            <Text>Geslo</Text>
             <TextInput
                 style={styles.input}
                 onChangeText={setPassword}
@@ -81,31 +89,48 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                 secureTextEntry={true}
                 placeholder="Geslo"
             />
-            <Button title={isSigningUp ? "Registracija" : "Prijava"} onPress={handleAuth} />
-            <Button title={isSigningUp ? "Pojdi na prijavo" : "Pojdi na registracijo"} onPress={() => setIsSigningUp(!isSigningUp)} />
+            <TouchableOpacity  onPress={handleAuth} style={styles.button}>
+                <Text style={styles.buttonText}>{isSigningUp ? "Registracija" : "Prijava"}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={() => setIsSigningUp(!isSigningUp)} style={styles.button}>
+                <Text style={styles.buttonText}>{isSigningUp ? "Pojdi na prijavo" : "Pojdi na registracijo"}</Text>
+            </TouchableOpacity>
+            
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: "#EDF5FC",
-        alignItems: "center",
-        justifyContent: "center",
-    },
+        width: '100%',
+        padding: 20,
+      },
     input: {
-        height: 40,
-        width: 200,
-        margin: 12,
+        width: '100%',
         borderWidth: 1,
+        borderColor: '#ccc',
         padding: 10,
-    },
+        marginBottom: 15,
+        marginTop: 5,
+      },
     naslov: {
         fontSize: 20,
         justifyContent: "center",
         fontWeight: 'bold',
-    }
+        textTransform: 'uppercase', 
+        marginBottom: 20,
+    },
+    button: {
+        margin: 10, 
+        padding: 10,
+        backgroundColor: '#2196F3',
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: 'white',
+        textAlign: 'center',
+        textTransform: 'uppercase', 
+      },
 });
 
 export default LoginScreen;
