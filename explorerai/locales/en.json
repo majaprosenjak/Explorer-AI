@@ -1,0 +1,17 @@
+{
+    "change-language": "Change language",
+    "welcome": "Welcome to ExplorerAI",
+    "home-page" : "Home Page",
+    "routes": "Routes",
+    "profile": "Profile",
+    "user-profile": "User Profile",
+    "registration": "Registration",
+    "go-to-registration": "Go to registration",
+    "login": "Login",
+    "go-to-login": "Go to login",
+    "password": "Password",
+    "monuments-map": "Monuments Map",
+    "map": "Map",
+    "error": "Error",
+    "correct-email": "Insert viable e-mail address."
+}

@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfilePage from './Components/ProfilePage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomePage from './Components/Home/HomePage';
+import { useTranslation } from 'react-i18next';
 
 const auth = getAuth();
 
@@ -17,20 +18,23 @@ const SettingsStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 
 function App() {
+
+  const {t} = useTranslation();
+
     return (
       <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen name="ExplorerAI">
             {() => (
               <SettingsStack.Navigator>
-                <SettingsStack.Screen name="Domača stran" component={HomePage} />
+                <SettingsStack.Screen name={t('home-page')} component={HomePage} />
               </SettingsStack.Navigator>
             )}
           </Tab.Screen>
           <Tab.Screen name="Poti">
             {() => (
               <HomeStack.Navigator>
-                <HomeStack.Screen name="Zemljevid atrakcij" component={MapPage} />
+                <HomeStack.Screen name={t('monuments-map')} component={MapPage} />
               </HomeStack.Navigator>
             )}
           </Tab.Screen>
