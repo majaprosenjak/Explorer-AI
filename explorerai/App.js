@@ -1,51 +1,58 @@
-import { registerRootComponent } from 'expo';
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Button, Alert, TouchableOpacity } from 'react-native';
-import MapPage from './Components/MapPage';
-import {  getAuth, signOut } from 'firebase/auth';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ProfilePage from './Components/ProfilePage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StyleSheet } from 'react-native';
+import MapPage from './Components/MapPage';
+import ProfilePage from './Components/UsersProfile/ProfilePage';
 import HomePage from './Components/Home/HomePage';
-
-const auth = getAuth();
+import UserStatistics from './Components/UsersProfile/UserStatistics/UserStatistics';
+import TextDetectionComponent from './Components/UsersProfile/TextTranslation/TextTranslationPage';
+import AddRoutePage from './Components/UsersProfile/AddRoute/AddRoutePage';
+import UserRoutesPage from './Components/UsersProfile/UsersRoutes/UserRoutesPage';
+import { UserProvider } from './Components/UsersProfile/UserContext';  
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const SettingsStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator(); 
 
 function App() {
     return (
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="ExplorerAI">
-            {() => (
-              <SettingsStack.Navigator>
-                <SettingsStack.Screen name="Domača stran" component={HomePage} />
-              </SettingsStack.Navigator>
-            )}
-          </Tab.Screen>
-          <Tab.Screen name="Poti">
-            {() => (
-              <HomeStack.Navigator>
-                <HomeStack.Screen name="Zemljevid atrakcij" component={MapPage} />
-              </HomeStack.Navigator>
-            )}
-          </Tab.Screen>
-          <Tab.Screen name="Profil">
-            {() => (
-              <HomeStack.Navigator>
-                <HomeStack.Screen name="Profil Uporabnika" component={ProfilePage} />
-                <HomeStack.Screen name="Map" component={MapPage} />
-              </HomeStack.Navigator>
-            )}
-          </Tab.Screen>
-        </Tab.Navigator>
-      </NavigationContainer>
+      <UserProvider>  
+        <NavigationContainer>
+          <Tab.Navigator>
+            <Tab.Screen name="ExplorerAI">
+              {() => (
+                <SettingsStack.Navigator>
+                  <SettingsStack.Screen name="Domača stran" component={HomePage} />
+                </SettingsStack.Navigator>
+              )}
+            </Tab.Screen>
+            <Tab.Screen name="Poti">
+              {() => (
+                <HomeStack.Navigator>
+                  <HomeStack.Screen name="Zemljevid atrakcij" component={MapPage} />
+                </HomeStack.Navigator>
+              )}
+            </Tab.Screen>
+            <Tab.Screen name="Profil">
+              {() => (
+                <ProfileStack.Navigator>
+                  <ProfileStack.Screen name="Profil uporabnika" component={ProfilePage} />
+                  <ProfileStack.Screen name="Statistika" component={UserStatistics} />
+                  <ProfileStack.Screen name="Dodaj pot" component={AddRoutePage} />
+                  <ProfileStack.Screen name="Uporabnikove poti" component={UserRoutesPage} />
+                  <ProfileStack.Screen name="Prevod" component={TextDetectionComponent} />
+                </ProfileStack.Navigator>
+              )}
+            </Tab.Screen>
+          </Tab.Navigator>
+        </NavigationContainer>
+      </UserProvider>
     );
-  }
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -75,5 +82,4 @@ const styles = StyleSheet.create({
     },
 });
 
-//registerRootComponent(App);
 export default App;

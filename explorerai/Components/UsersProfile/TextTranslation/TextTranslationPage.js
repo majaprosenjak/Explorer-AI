@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, Text, ScrollView, Image, Keyboard } from 'react-native';
+import { View, Text, ScrollView, Image, Keyboard, StyleSheet, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
@@ -12,7 +12,7 @@ const TextDetectionComponent = () => {
   const [toLanguage, setToLanguage] = useState('');
   const [openFrom, setOpenFrom] = useState(false);
 
-  const analyzeImage = async () => {
+  const analyzeImage = async (imageUri) => {
     try {
       if (!imageUri) {
         alert('Najprej izberite sliko.');
@@ -28,7 +28,6 @@ const TextDetectionComponent = () => {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Prepare request data
       const requestData = {
         requests: [
           {
@@ -40,10 +39,10 @@ const TextDetectionComponent = () => {
         ],
       };
 
-      // Send a POST request to the Google Vision API
+      // POST request to Google Vision API
       const apiResponse = await axios.post(apiUrl, requestData);
 
-      // Retrieve the detected text from the API response
+      // API response
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
       if (textAnnotations && textAnnotations.length > 0) {
         setDetectedText(textAnnotations[0].description);
@@ -59,7 +58,7 @@ const TextDetectionComponent = () => {
   };
 
 
-  const translateTextAutomatically = async () => {
+  const translateText = async () => {
     console.log(toLanguage);
     if (!detectedText || !toLanguage) {
         return; 
@@ -67,10 +66,7 @@ const TextDetectionComponent = () => {
 
     try {
         const API_KEY = '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';
-
-        
         const textWithoutNewlines = detectedText.replace(/\n/g, ' ');
-
         const trimmedText = textWithoutNewlines.trim(); 
         console.log(trimmedText);
         if (trimmedText) { 
@@ -78,7 +74,7 @@ const TextDetectionComponent = () => {
                 'https://api.openai.com/v1/chat/completions',
                 {
                     messages: [
-                        { role: 'user', content: `translate ${trimmedText} to ${toLanguage}` },
+                        { role: 'user', content: `translate this text: ${trimmedText} into this language: ${toLanguage}` },
                         { role: 'assistant', content: 'translate' },
                     ],
                     max_tokens: 150,
@@ -122,17 +118,20 @@ const pickImage = async () => {
         });
 
         if (result === null) {
-            console.log('Izbiranje slike je bilo prekinjeno.');
+            console.log('Image picking interrupted');
             return;
         }
 
         if (!result.cancelled) {
             setImageUri(result.assets[0].uri);
+            analyzeImage(result.assets[0].uri);
+
         } else {
             console.log('Izbiranje slike je bilo prekinjeno.');
         }
+
     } catch (error) {
-        console.error('Napaka pri izbiranju slike:', error);
+        console.error(error);
         alert('Napaka pri izbiranju slike. Poskusite znova.');
     }
 };
@@ -147,9 +146,11 @@ const takePhoto = async () => {
 
     if (!result.cancelled) {
       setImageUri(result.assets[0].uri);
+      analyzeImage(result.assets[0].uri);
+
     }
   } catch (error) {
-    console.error('Error taking photo:', error);
+    console.log( error);
   }
 };
 
@@ -157,51 +158,113 @@ const takePhoto = async () => {
 
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 50 }}>
-      <Button title="Izberi sliko" onPress={pickImage} />
-      <Button title="Odpri kamero" onPress={takePhoto} />
-      <Button title="Analiziraj sliko" onPress={analyzeImage} />
+    <View style={styles.container}>
+      <View style={styles.buttonRow}>
+          <TouchableOpacity onPress={pickImage} style={styles.button}>
+            <Text style={styles.buttonText}>Odpri galerijo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={takePhoto} style={styles.button}>
+            <Text style={styles.buttonText}>Odpri kamero</Text>
+          </TouchableOpacity>
+        </View>
       <DropDownPicker
-                open={openFrom}
-                value={toLanguage}
-                setOpen={setOpenFrom}
-                setValue={setToLanguage}
-                items={[
-                    { label: 'English', value: 'english' },
-                    { label: 'Spanish', value: 'spanish' },
-                    { label: 'Slovene', value: 'slovene' },
-                    { label: 'German', value: 'german' },
-                ]}
-                onChangeValue={(item) => {
-                    if (item && item.value) {
-                        setToLanguage(item.value);
-                    }
-                }}
-            />
-            <Button title="Prevedi" onPress={translateTextAutomatically} />
-
-
-      {imageUri && (
-        <Image
-          source={{ uri: imageUri }}
-          style={{ width: 200, height: 200, marginVertical: 20 }}
+        open={openFrom}
+        value={toLanguage}
+        setOpen={setOpenFrom}
+        setValue={setToLanguage}
+        placeholder="Izberite jezik"
+        items={[
+            { label: 'Angleščina', value: 'english' },
+            { label: 'Španščina', value: 'spanish' },
+            { label: 'Slovenščina', value: 'slovene' },
+            { label: 'Nemščina', value: 'german' },
+            { label: 'Italijanščina', value: 'italian' }
+        ]}
+        onChangeValue={(item) => {
+            if (item && item.value) {
+                setToLanguage(item.value);
+            }
+        }}
         />
-      )}
+        <TouchableOpacity onPress={translateText} style={styles.button}>
+          <Text style={styles.buttonText}>Prevedi</Text>
+        </TouchableOpacity>
 
-      <ScrollView>
-        <Text style={{ marginTop: 20 }}>Detected Text:</Text>
-        <Text style={{ marginTop: 10 }}>{detectedText}</Text>
+      <ScrollView >
 
 
-        {translatedText !== '' && (
-          <>
-            <Text style={{ marginTop: 20 }}>Translated Text:</Text>
-            <Text style={{ marginTop: 10 }}>{translatedText}</Text>
-          </>
-        )}
-      </ScrollView>
+
+        {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={{ width: '100%', height: '30%', marginVertical: 20 }}
+            />
+          )}
+
+          {detectedText !== '' && (
+            <View style={styles.card}>
+              <View style={styles.cardContent}>
+                  <Text style={{ marginTop: 10 }}>{detectedText}</Text>
+              </View>
+            </View>    
+          )}
+
+          {translatedText !== '' && (
+            <View style={styles.cardTrans}>
+              <View style={styles.cardContent}>
+                  <Text style={{ marginTop: 10 }}>{translatedText}</Text>
+              </View>
+            </View>   
+          )}
+    </ScrollView>
     </View>
+
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  button: {
+    margin: 10, 
+    padding: 10,
+    backgroundColor: '#2196F3',
+    borderRadius: 5,
+  },
+  
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    textTransform: 'uppercase', 
+  },
+  buttonRow: {
+    flexDirection: 'row', 
+    marginTop: 20, 
+  },
+  card: {
+    padding: 10,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: 'white',
+    borderRadius: 8,
+},
+cardTrans: {
+  padding: 10,
+  marginTop: 10,
+  marginBottom: 600,
+
+  borderWidth: 1,
+  borderColor: '#ccc',
+  backgroundColor: 'white',
+  borderRadius: 8,
+},
+cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+},
+
+});
 
 export default TextDetectionComponent;
