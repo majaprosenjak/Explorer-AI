@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, Text, StyleSheet, View } from 'react-native';
 import { collection, getDocs, query, where, getDoc } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig'; 
 import RoutePieChart from './RoutePieChart';
@@ -7,7 +7,6 @@ import RouteLineChart from './RouteLineChart';
 import RouteBarChart from './RouteBarChart';
 import { useUser } from '../UserContext'; 
 
-const screenWidth = Dimensions.get('window').width;
 
 const UserStatistics = () => {
   const [routesWalked, setRoutesWalked] = useState([]);
@@ -70,13 +69,28 @@ const UserStatistics = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.heading}>Letna statistika</Text>
-      <Text style={styles.yearlyText}>Število prehojenih po mesecih</Text>
-      <RouteLineChart data={routesWalked} />
-      <Text style={styles.yearlyText}>Različne poti, ki ste jih prehodili</Text>
-      <RoutePieChart data={routesWalked} />
-      <Text style={styles.yearlyText}>Število minut, ki ste jih porabili za hojo po poteh po mesecih</Text>
-      <RouteBarChart data={routesWalked} />
+      <View style={styles.cardHeading}>
+        <Text style={styles.heading}>Letna statistika</Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.yearlyText}>Število prehojenih po mesecih</Text>
+        <RouteLineChart data={routesWalked} />
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.yearlyText}>Različne poti, ki ste jih prehodili</Text>
+        <RoutePieChart data={routesWalked} />
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.yearlyText}>Število minut, ki ste jih porabili za hojo po poteh po mesecih</Text>
+        <RouteBarChart data={routesWalked} />
+      </View>
+
+      
+      
+     
     </ScrollView>
   );
 };
@@ -87,11 +101,30 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
   },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 20,
+    marginBottom: 30,
+  },
+  cardHeading: {
+    backgroundColor: '#2196F3',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20,
+    justifyContent: 'center',
+  },
   yearlyText: {
-    paddingTop: 30
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   heading: {
     textTransform: 'uppercase',
+    fontSize: 18,
+    color: '#FFFFFF',
+    textAlign: 'center',
+
+
   }
 });
 

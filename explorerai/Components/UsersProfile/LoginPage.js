@@ -41,7 +41,6 @@ const LoginScreen = ({ onUserLoggedIn }) => {
                     console.log(`User created: ${user.email}`);
                     const userData = {
                         email: user.email,
-                        // Add any additional user data you want to store
                       };
                     addDoc(collection(firestore, 'users'), userData);
                     onUserLoggedIn(user);
@@ -94,8 +93,8 @@ const LoginScreen = ({ onUserLoggedIn }) => {
             <TouchableOpacity  onPress={handleAuth} style={styles.button}>
                 <Text style={styles.buttonText}>{isSigningUp ? t('registration') : t('login')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity  onPress={() => setIsSigningUp(!isSigningUp)} style={styles.button}>
-                <Text style={styles.buttonText}>{isSigningUp ? t('go-to-login') : t('go-to-registration')}</Text>
+            <TouchableOpacity  onPress={() => setIsSigningUp(!isSigningUp)} style={styles.buttonSecond}>
+                <Text style={styles.buttonTextSecond}>{isSigningUp ? t('go-to-login') : t('go-to-registration')}</Text>
             </TouchableOpacity>
             
         </View>
@@ -130,6 +129,20 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
+        textAlign: 'center',
+        textTransform: 'uppercase', 
+      },
+
+      buttonSecond: {
+        margin: 10, 
+        padding: 10,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        borderColor: '#2196F3', 
+        borderWidth: 1.5, 
+      }, 
+      buttonTextSecond: {
+        color: 'black',
         textAlign: 'center',
         textTransform: 'uppercase', 
       },

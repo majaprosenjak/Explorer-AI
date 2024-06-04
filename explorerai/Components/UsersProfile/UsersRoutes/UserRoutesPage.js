@@ -42,7 +42,7 @@ const UserRoutesPage = () => {
           const routeDoc = await getDoc(routeRef);
           if (routeDoc.exists()) {
             const routeData = routeDoc.data();
-            const routeId = routeDoc.id; // Get the document ID
+            const routeId = routeDoc.id; 
     
             const monumentsRef = collection(routeRef, 'monuments');
             const monumentsSnapshot = await getDocs(monumentsRef);
@@ -66,7 +66,7 @@ const UserRoutesPage = () => {
   }, []);
 
   const draftsRoute = () => (
-    <RoutesDrafts routesCreated={routesCreated} />
+    <RoutesDrafts routesCreated={routesCreated} user={user} />
   );
 
   const publishedRoute = () => (

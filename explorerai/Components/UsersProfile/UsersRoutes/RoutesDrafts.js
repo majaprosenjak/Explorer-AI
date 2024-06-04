@@ -4,13 +4,17 @@ import MapView, { Marker } from 'react-native-maps';
 import { Avatar } from 'react-native-paper';
 import EditRoute from './EditRoute';
 import EditMonument from './EditMonument';
+import { updateDoc, doc, deleteDoc, collection, query, where, getDocs, arrayRemove } from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig'; 
 
-const RoutesDrafts = ({ routesCreated }) => {
+const RoutesDrafts = ({ routesCreated, user }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [selectedMonument, setSelectedMonument] = useState(null);
   const [showEditRoute, setShowEditRoute] = useState(false);
   const [showEditMonument, setShowEditMonument] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+
 
   const draftRoutes = routesCreated.filter(route => route.published === false);
 
@@ -46,6 +50,63 @@ const RoutesDrafts = ({ routesCreated }) => {
   const handleMonumentPress = (monument) => {
     setSelectedMonument(monument);
     setShowEditMonument(true);
+  };
+
+  const handlePublishPress = async(selectedRoute) => {
+    if (!selectedRoute) {
+      console.log('No route selected')
+      return;
+    }
+    try {
+      const routeDocRef = doc(firestore, "routes", selectedRoute.id);
+      await updateDoc(routeDocRef, { published: true });
+      console.log('Published route:', selectedRoute.id);
+      Alert.alert( "Uspešno ste objavili pot.");
+    } catch (e) {
+      Alert.alert("Napaka", "Prišlo je do napake. Poskusite ponovno.");
+      console.error('Error publishing the route', e);
+    }
+  }
+
+  
+
+  const handleDeletePress = async (selectedRoute) => {
+    setConfirmModalVisible(false);
+
+    try {
+      const usersRef = collection(firestore, 'users');
+      const q = query(usersRef, where('email', '==', user));
+      const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.empty) {
+        console.log('No user found with the specified email.');
+        return;
+      }
+  
+      const userDoc = querySnapshot.docs[0];
+      const userId = userDoc.id;
+      const userDocRef = doc(firestore, 'users', userId);
+  
+      const routeDocRef = doc(firestore, "routes", selectedRoute.id);
+      await deleteDoc(routeDocRef);
+      console.log('Deleted Route:', selectedRoute.id);
+      console.log(selectedRoute.routesCreated)
+      await updateDoc(userDocRef, {
+        routesCreated: arrayRemove(routeDocRef)
+      });
+      Alert.alert("Uspešno ste izbrisali pot:", selectedRoute.name);
+      closeModal()
+
+      console.log('Removed route reference from user document:', userId);
+
+    } catch (error) {
+      console.error('Error deleting route and updating user document:', error);
+    }
+  };
+
+  const onConfirmSaveRoute = () => {
+    console.log("clicked")
+    setConfirmModalVisible(true);
   };
 
   return (
@@ -93,17 +154,37 @@ const RoutesDrafts = ({ routesCreated }) => {
 
               
               
-              <TouchableOpacity style={styles.closeButton}>
-                <Text style={styles.closeButtonText}>Objavi pot</Text>
+              <TouchableOpacity style={styles.draftButton} onPress={() => handlePublishPress(selectedRoute)}>
+                <Text style={styles.draftButtonText}>Objavi pot</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.closeButton}>
-                <Text style={styles.closeButtonText}>Izbriši pot</Text>
+              <TouchableOpacity style={styles.draftButton} onPress={onConfirmSaveRoute}>
+                <Text style={styles.draftButtonText}>Izbriši pot</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>Zapri</Text>
+              <TouchableOpacity style={styles.draftButtonClose} onPress={closeModal}>
+                <Text style={styles.draftButtonCloseText}>Zapri</Text>
               </TouchableOpacity>
             </ScrollView>
           )}
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={confirmModalVisible}
+        onRequestClose={() => setConfirmModalVisible(false)}
+      >
+        <View style={styles.confirmModalBackground}>
+          <View style={styles.confirmModalContainer}>
+            <Text>Ste prepričani, da želite izbrisati pot?</Text>
+            <View style={styles.buttonRow}>
+            <TouchableOpacity onPress={() => handleDeletePress(selectedRoute)} style={styles.confirmButton}>
+              <Text style={styles.confirmButtonText}>Da</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setConfirmModalVisible(false)} style={styles.buttonNe}>
+              <Text style={styles.buttonTextNe}>Ne</Text>
+            </TouchableOpacity>
+          </View>
+          </View>
         </View>
       </Modal>
       <EditRoute visible={showEditRoute} onClose={() => setShowEditRoute(false)} selectedRoute={selectedRoute} />
@@ -118,27 +199,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#EDF5FC',
     padding: 20,
   },
-  routeContainer: {
-    marginBottom: 10,
-  },
+  
   monumentContainer: {
     backgroundColor: '#F0F0F0',
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
-  },
-  monumentName: {
-    fontWeight: 'bold',
-  },
-  monumentDescription: {
-    marginTop: 5,
-  },
-  mapContainer: {
-    marginVertical: 20,
-  },
-  map: {
-    width: '100%',
-    height: 200,
   },
   routeCard: {
     backgroundColor: '#FFFFFF',
@@ -147,10 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     elevation: 2,
   },
-  routeName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -172,17 +235,34 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 5,
   },
-  closeButton: {
+  draftButton: {
     backgroundColor: '#2196F3',
     borderRadius: 8,
     padding: 10,
     alignItems: 'center',
     marginTop: 20,
-    marginBottom: 50,
   },
-  closeButtonText: {
+  draftButtonClose: {
+    backgroundColor: 'white',
+    borderColor: '#2196F3', 
+    borderWidth: 1.5,
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 50
+  },
+  draftButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+    textTransform: 'uppercase',
+
+  },
+  draftButtonCloseText: {
+    color: 'black',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+
   },
   tagContainer: {
     backgroundColor: '#007AFF',
@@ -197,7 +277,49 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   avatar:{
-    alignSelf: 'flex-end'  }
+    alignSelf: 'flex-end' 
+  },
+    buttonNe: {
+      margin: 10, 
+      padding: 10,
+      backgroundColor: 'white',
+      borderRadius: 5,
+      borderColor: '#2196F3', 
+      borderWidth: 1.5, 
+    },
+    confirmButton: {
+      margin: 10, 
+      padding: 10,
+      backgroundColor: '#2196F3',
+      borderRadius: 5,
+    },
+    buttonTextNe: {
+      color: 'black',
+      textAlign: 'center',
+      textTransform: 'uppercase', 
+    },
+    confirmButtonText: {
+      color: 'white',
+    textAlign: 'center',
+    textTransform: 'uppercase', 
+    },
+    buttonRow: {
+      flexDirection: 'row', 
+      marginTop: 20, 
+    },
+    confirmModalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },confirmModalContainer: {
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+
 });
 
 export default RoutesDrafts;

@@ -7,29 +7,28 @@ const RoutesPublished = ({ routesCreated }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
+  const [monumentCoordinates, setMonumentCoordinates] = useState([]);
 
   const handleRoutePress = (route) => {
     setSelectedRoute(route);
     setModalVisible(true);
+
+    const coordinates = route.monuments
+      .filter(monument => monument.coordinates)
+      .map(monument => ({
+        ...monument.coordinates,
+        name: monument.name,
+        description: monument.description,
+      }));
+    
+    setMonumentCoordinates(coordinates);
   };
 
   const closeModal = () => {
     setModalVisible(false);
     setSelectedRoute(null);
+    setMonumentCoordinates([]);
   };
-
-  const monumentCoordinates = [];
-  publishedRoutes.forEach(route => {
-    route.monuments.forEach(monument => {
-      if (monument.coordinates) {
-        monumentCoordinates.push({
-          ...monument.coordinates,
-          name: monument.name,
-          description: monument.description,
-        });
-      }
-    });
-  });
 
   const onMarkerPress = (marker) => {
     Alert.alert(marker.name, marker.description);
@@ -37,10 +36,9 @@ const RoutesPublished = ({ routesCreated }) => {
 
   return (
     <ScrollView style={styles.container}>
-      
       {publishedRoutes.map((route, index) => (
         <TouchableOpacity key={`route-${index}`} style={styles.routeCard} onPress={() => handleRoutePress(route)}>
-          <Text >{route.name}</Text>
+          <Text>{route.name}</Text>
         </TouchableOpacity>
       ))}
       <Modal
@@ -56,7 +54,7 @@ const RoutesPublished = ({ routesCreated }) => {
               <Text style={styles.modalText}>{selectedRoute.description}</Text>
               <Text style={styles.modalText}>{selectedRoute.duration}</Text>
               <View style={styles.tagContainer}>
-              <Text style={styles.tagText}>{selectedRoute.tags}</Text>
+                <Text style={styles.tagText}>{selectedRoute.tags}</Text>
               </View>
               <Text>Znamenitosti:</Text>
               {selectedRoute.monuments && selectedRoute.monuments.length > 0 ? (
@@ -70,26 +68,26 @@ const RoutesPublished = ({ routesCreated }) => {
                 <Text>Ni znamenitosti</Text>
               )}
               <View style={styles.mapContainer}>
-            <MapView
-            style={styles.map}
-            initialRegion={{
-                latitude: monumentCoordinates.length ? monumentCoordinates[0].latitude : 0,
-                longitude: monumentCoordinates.length ? monumentCoordinates[0].longitude : 0,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
-            }}
-            >
-            {monumentCoordinates.map((marker, index) => (
-                <Marker
-                key={`marker-${index}`}
-                coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-                title={marker.name}
-                description={marker.description}
-                onPress={() => onMarkerPress(marker)}
-                />
-            ))}
-            </MapView>
-            </View>
+                <MapView
+                  style={styles.map}
+                  initialRegion={{
+                    latitude: 46.5547,
+                    longitude: 15.6459,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                  }}
+                >
+                  {monumentCoordinates.map((marker, index) => (
+                    <Marker
+                      key={`marker-${index}`}
+                      coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+                      title={marker.name}
+                      description={marker.description}
+                      onPress={() => onMarkerPress(marker)}
+                    />
+                  ))}
+                </MapView>
+              </View>
               <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                 <Text style={styles.closeButtonText}>Zapri</Text>
               </TouchableOpacity>
@@ -105,7 +103,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EDF5FC',
-    padding: 20,
   },
   routeContainer: {
     marginBottom: 10,

@@ -80,8 +80,8 @@ const EditRoute = ({ visible, onClose, selectedRoute }) => {
               onChangeText={text => setTags(text)}
             />
           </ScrollView>
-          <TouchableOpacity style={styles.closeButton} onPress={handleSave}>
-            <Text style={styles.closeButtonText}>Shrani spremembe</Text>
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <Text style={styles.buttonText}>Shrani spremembe</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>Zapri</Text>
@@ -95,9 +95,8 @@ const EditRoute = ({ visible, onClose, selectedRoute }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'white',
+    width: '100%',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
@@ -113,15 +112,31 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   closeButton: {
+    backgroundColor: 'white',
+    borderColor: '#2196F3', 
+    borderWidth: 1.5,
+    borderRadius: 8,
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  button: {
     backgroundColor: '#2196F3',
     borderRadius: 8,
     padding: 10,
     alignItems: 'center',
     marginTop: 20,
   },
-  closeButtonText: {
+  buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  closeButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   input: {
     width: '100%',

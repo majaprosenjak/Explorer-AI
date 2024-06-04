@@ -169,7 +169,7 @@ const RouteInputPage = ({ navigation }) => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text>Ste prepričani, da želite shraniti pot?</Text>
+            <Text>Ste prepričani, da želite shraniti pot? Pot se bo shranila med vaše osnutke poti.</Text>
             <View style={styles.buttonRow}>
             <TouchableOpacity onPress={onSaveRoute} style={styles.button}>
               <Text style={styles.buttonText}>Da</Text>
@@ -192,7 +192,7 @@ const RouteInputPage = ({ navigation }) => {
           <View style={styles.modalContainer}>
             <Text>Uspešno ste shranili pot!</Text>
             <TouchableOpacity onPress={onSuccessModalClose} style={styles.button}>
-              <Text style={styles.buttonText}>Ogled vaših poti</Text>
+              <Text style={styles.buttonText}>Ogled vaših osnutkov poti</Text>
             </TouchableOpacity>
           </View>
         </View>
