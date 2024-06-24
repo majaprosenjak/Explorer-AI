@@ -3,13 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet } from 'react-native';
-import MapPage from './Components/MapPage';
+import MapPage from './Components/Routes/MapPage';
 import ProfilePage from './Components/UsersProfile/ProfilePage';
 import HomePage from './Components/Home/HomePage';
 import UserStatistics from './Components/UsersProfile/UserStatistics/UserStatistics';
 import TextDetectionComponent from './Components/UsersProfile/TextTranslation/TextTranslationPage';
 import AddRoutePage from './Components/UsersProfile/AddRoute/AddRoutePage';
 import UserRoutesPage from './Components/UsersProfile/UsersRoutes/UserRoutesPage';
+import RoutesPage from './Components/Routes/RoutesPage'
 import { UserProvider } from './Components/UsersProfile/UserContext';  
 import { useTranslation } from 'react-i18next';
 
@@ -37,6 +38,7 @@ function App() {
             <Tab.Screen name={t('routes')}>
               {() => (
                 <HomeStack.Navigator>
+                  <HomeStack.Screen name={"routes-page"} component={RoutesPage} />
                   <HomeStack.Screen name={t('monuments-map')} component={MapPage} />
                 </HomeStack.Navigator>
               )}
