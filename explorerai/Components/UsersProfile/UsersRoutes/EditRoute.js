@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
 import { updateDoc, doc } from 'firebase/firestore';
-import { firestore } from '../../firebaseConfig'; 
+import { firestore } from '../../firebaseConfig';
+import { useTranslation } from 'react-i18next';
+
 
 const EditRoute = ({ visible, onClose, selectedRoute }) => {
   const [name, setName] = useState('');
   const [duration, setDuration] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
+
+  const { t } = useTranslation(); 
+
 
   useEffect(() => {
     console.log(selectedRoute?.id);
@@ -38,9 +43,9 @@ const EditRoute = ({ visible, onClose, selectedRoute }) => {
       await updateDoc(routeDocRef, updatedRoute);
       console.log('Updated Route:', updatedRoute);
       onClose();
-      Alert.alert( "Uspešno ste posodobili pot.");
+      Alert.alert(t('ur-routeUpdateSuccess'));
     } catch (e) {
-      Alert.alert("Napaka", "Prišlo je do napake. Poskusite ponovno.");
+      Alert.alert(t('ur-routeUpdateError'));
       console.error('Error updating the route', e);
     }
   };
@@ -49,42 +54,42 @@ const EditRoute = ({ visible, onClose, selectedRoute }) => {
     <Modal animationType="slide" transparent={true} visible={visible}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalText}>Urejanje poti</Text>
+          <Text style={styles.modalText}>{t('ur-editRoute')}</Text>
           <ScrollView style={styles.container}>
-            <Text>Ime poti</Text>
+            <Text>{t('addName')}</Text>
             <TextInput
               style={styles.input}
               value={name}
-              placeholder="Ime poti"
+              placeholder={t('addName')}
               onChangeText={text => setName(text)}
             />
-            <Text>Trajanje poti</Text>
+            <Text>{t('addDuration')}</Text>
             <TextInput
               style={styles.input}
               value={duration}
-              placeholder="Trajanje poti"
+              placeholder={t('addDuration')}
               onChangeText={text => setDuration(text)}
             />
-            <Text>Opis poti</Text>
+            <Text>{t('addDesc')}</Text>
             <TextInput
               style={styles.input}
               value={description}
-              placeholder="Opis poti"
+              placeholder={t('addDesc')}
               onChangeText={text => setDescription(text)}
             />
-            <Text>Oznake</Text>
+            <Text>{t('addTags')}</Text>
             <TextInput
               style={styles.input}
               value={tags}
-              placeholder="Oznake"
+              placeholder={t('addTags')}
               onChangeText={text => setTags(text)}
             />
           </ScrollView>
           <TouchableOpacity style={styles.button} onPress={handleSave}>
-            <Text style={styles.buttonText}>Shrani spremembe</Text>
+            <Text style={styles.buttonText}>{t('ur-saveChanges')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Zapri</Text>
+            <Text style={styles.closeButtonText}>{t('ur-close')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -130,12 +135,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
   closeButtonText: {
     color: 'black',
-    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
   input: {

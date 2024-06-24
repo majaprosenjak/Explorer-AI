@@ -31,26 +31,26 @@ function App() {
             <Tab.Screen name="ExplorerAI">
               {() => (
                 <SettingsStack.Navigator>
-                  <SettingsStack.Screen name={t('home-page')} component={HomePage} />
+                  <SettingsStack.Screen name={t('home-page')} component={HomePage} options={{ headerShown: false }} />
                 </SettingsStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name={t('routes')}>
+            <Tab.Screen name={t('routes')} >
               {() => (
                 <HomeStack.Navigator>
-                  <HomeStack.Screen name={"routes-page"} component={RoutesPage} />
-                  <HomeStack.Screen name={t('monuments-map')} component={MapPage} />
+                  <HomeStack.Screen name={"routes-page"} component={RoutesPage} options={{ headerShown: false }} />
+                  <HomeStack.Screen name={t('monuments-map')} component={MapPage} options={{ headerShown: false }} />
                 </HomeStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name={t('profile')}>
+            <Tab.Screen name={t('profile')} options={{ headerShown: false }}>
               {() => (
                 <ProfileStack.Navigator>
                   <ProfileStack.Screen name={t('user-profile')} component={ProfilePage} />
-                  <ProfileStack.Screen name="Statistika" component={UserStatistics} />
-                  <ProfileStack.Screen name="Dodaj pot" component={AddRoutePage} />
-                  <ProfileStack.Screen name="Uporabnikove poti" component={UserRoutesPage} />
-                  <ProfileStack.Screen name="Prevod" component={TextDetectionComponent} />
+                  <ProfileStack.Screen name={t('up-statistics')} component={UserStatistics} />
+                  <ProfileStack.Screen name={t('up-addRoute')}  component={AddRoutePage} />
+                  <ProfileStack.Screen name={t('up-userRoutes')} component={UserRoutesPage} />
+                  <ProfileStack.Screen name={t('up-translate')} component={TextDetectionComponent} />
                 </ProfileStack.Navigator>
               )}
             </Tab.Screen>

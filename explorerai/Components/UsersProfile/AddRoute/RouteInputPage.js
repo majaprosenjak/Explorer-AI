@@ -4,8 +4,7 @@ import { Divider, Avatar } from 'react-native-paper';
 import { firestore } from "../../firebaseConfig";
 import { collection, addDoc, query, where, getDocs, updateDoc, arrayUnion, doc } from "firebase/firestore"; 
 import { useUser } from '../UserContext'; 
-
-
+import { useTranslation } from "react-i18next";
 
 const RouteInputPage = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -13,20 +12,17 @@ const RouteInputPage = ({ navigation }) => {
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [published, setPublished] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const [tagsArray, setTagsArray] = useState([]);
   const [monuments, setMonuments] = useState([]);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const { user } = useUser();
-
-  
+  const { t } = useTranslation();
 
   const onNextPress = () => {
-    navigation.navigate('Vnos znamenitosti', {
-      name, duration, description, tagsArray, published,
-      addMonument: (monument) => {
-        setMonuments([...monuments, monument]);
-      }
+    navigation.navigate(t('addMonument'), {
+      name, duration, description, tagsArray, published, admin, monuments, updateMonuments
     });
   };
 
@@ -38,29 +34,28 @@ const RouteInputPage = ({ navigation }) => {
       description,
       tags: tagsArray,
       published, 
+      admin,
+      walkedCounter: 0,
     };
   
     try {
       const routeDocRef = await addDoc(collection(firestore, "routes"), routeData);
-      console.log('Route ID:', routeDocRef.id); 
       const routeId = routeDocRef.id;
-      console.log('Route:', routeData);
 
       const userQuery = query(collection(firestore, "users"), where("email", "==", user));
-    const userQuerySnapshot = await getDocs(userQuery);
+      const userQuerySnapshot = await getDocs(userQuery);
 
-    if (!userQuerySnapshot.empty) {
-      const userDoc = userQuerySnapshot.docs[0];
-      const userId = userDoc.id;
+      if (!userQuerySnapshot.empty) {
+        const userDoc = userQuerySnapshot.docs[0];
+        const userId = userDoc.id;
 
-      const routeRef = doc(firestore, "routes", routeId);
+        const routeRef = doc(firestore, "routes", routeId);
+        await updateDoc(userDoc.ref, { routesCreated: arrayUnion(routeRef) });
 
-      await updateDoc(userDoc.ref, { routesCreated: arrayUnion(routeRef) });
-
-      console.log('Route added to user:', userId);
-    } else {
-      console.log('User not found', currentUser.email);
-    }
+        console.log('Route added to user:', userId);
+      } else {
+        console.log('User not found', currentUser.email);
+      }
   
       for (const monument of monuments) {
         await addDoc(collection(routeDocRef, "monuments"), monument);
@@ -69,9 +64,13 @@ const RouteInputPage = ({ navigation }) => {
   
       setSuccessModalVisible(true);
     } catch (e) {
-      Alert.alert("Napaka", "Napaka pri dodajanju nove poti. Poskusite znova.");
+      Alert.alert("Error", "Error adding new route. Please try again.");
       console.log('Error adding route: ', e);
     }
+  };
+
+  const updateMonuments = (updatedMonuments) => {
+    setMonuments(updatedMonuments);
   };
 
   const onConfirmSaveRoute = () => {
@@ -80,7 +79,7 @@ const RouteInputPage = ({ navigation }) => {
 
   const onSuccessModalClose = () => {
     setSuccessModalVisible(false);
-    navigation.navigate('Uporabnikove poti');
+    navigation.navigate(t('up-userRoutes'));
   };
 
   const onAddTag = () => {
@@ -92,28 +91,28 @@ const RouteInputPage = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text>Ime poti</Text>
+      <Text>{t('addName')}</Text>
       <TextInput
         style={styles.input}
         value={name}
-        placeholder="Ime poti"
+        placeholder={t('addName')}
         onChangeText={text => setName(text)}
       />
-      <Text>Predvideno trajanje</Text>
+      <Text>{t('addDuration')}</Text>
       <TextInput
         style={styles.input}
         value={duration}
-        placeholder="Predvideno trajanje"
+        placeholder={t('addDuration')}
         onChangeText={text => setDuration(text)}
       />
-      <Text>Opis poti</Text>
+      <Text>{t('addDesc')}</Text>
       <TextInput
         style={styles.input}
         value={description}
-        placeholder="Opis poti"
+        placeholder={t('addDesc')}
         onChangeText={text => setDescription(text)}
       />
-      <Text>Oznake</Text>
+      <Text>{t('addTags')}</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {tagsArray.map((tag, index) => (
           <TouchableOpacity key={index} style={styles.tagContainer}>
@@ -124,42 +123,40 @@ const RouteInputPage = ({ navigation }) => {
       <TextInput
         style={styles.input}
         value={tags}
-        placeholder="Oznake"
+        placeholder={t('addTags')}
         onChangeText={text => setTags(text)}
         onSubmitEditing={onAddTag}
       />
-      <Divider style={{height:1}} />
-      <Text style={{marginTop:10, marginBottom:10}}>Dodane znamenitosti</Text>
+      <Divider style={{ height: 1 }} />
+      <Text style={{ marginTop: 10, marginBottom: 10 }}>{t('addMon')}</Text>
 
       {monuments.length === 0 ? (
         <View style={styles.card}>
-            <View style={styles.cardContent}>
-                <Text style={{  color: '#ccc'}}>Ni dodanih znamenitosti</Text>
-            </View>
-          </View>             
-        ) : (
+          <View style={styles.cardContent}>
+            <Text style={{ color: '#ccc' }}>{t('addNoMon')}</Text>
+          </View>
+        </View>
+      ) : (
         monuments.map((monument, index) => (
           <View key={index} style={styles.card}>
             <View style={styles.cardContent}>
-              <Avatar.Icon icon="map-marker" style={styles.avatar}  backgroundColor="#2196F3" size={40} />
+              <Avatar.Icon icon="map-marker" style={styles.avatar} backgroundColor="#2196F3" size={40} />
               <View style={styles.textContainer}>
                 <Text style={styles.name}>{monument.name}</Text>
                 <Text style={styles.description}>{monument.description}</Text>
               </View>
             </View>
-          </View>      
+          </View>
         ))
-    )}
-
+      )}
 
       <TouchableOpacity onPress={onNextPress} style={styles.button}>
-        <Text style={styles.buttonText}>Dodaj znamenitost</Text>
+        <Text style={styles.buttonText}>{t('addAddMon')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onConfirmSaveRoute} style={styles.buttonShrani}>
-        <Text style={styles.buttonText}>Shrani pot</Text>
+        <Text style={styles.buttonText}>{t('addSaveRoute')}</Text>
       </TouchableOpacity>
-      
 
       <Modal
         animationType="slide"
@@ -169,15 +166,15 @@ const RouteInputPage = ({ navigation }) => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text>Ste prepričani, da želite shraniti pot? Pot se bo shranila med vaše osnutke poti.</Text>
+            <Text>{t('addConfirm')}</Text>
             <View style={styles.buttonRow}>
-            <TouchableOpacity onPress={onSaveRoute} style={styles.button}>
-              <Text style={styles.buttonText}>Da</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setConfirmModalVisible(false)} style={styles.buttonNe}>
-              <Text style={styles.buttonTextNe}>Ne</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity onPress={onSaveRoute} style={styles.button}>
+                <Text style={styles.buttonText}>{t('addYes')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setConfirmModalVisible(false)} style={styles.buttonNe}>
+                <Text style={styles.buttonTextNe}>{t('addNo')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -190,9 +187,9 @@ const RouteInputPage = ({ navigation }) => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text>Uspešno ste shranili pot!</Text>
+            <Text>{t('addSuccess')}</Text>
             <TouchableOpacity onPress={onSuccessModalClose} style={styles.button}>
-              <Text style={styles.buttonText}>Ogled vaših osnutkov poti</Text>
+              <Text style={styles.buttonText}>{t('addToRoutes')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -206,39 +203,39 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   button: {
-    margin: 10, 
+    margin: 10,
     padding: 10,
     backgroundColor: '#2196F3',
     borderRadius: 5,
   },
   buttonShrani: {
-    margin: 10, 
+    margin: 10,
     padding: 10,
     backgroundColor: '#2196F3',
     borderRadius: 5,
     marginBottom: 30
   },
   buttonNe: {
-    margin: 10, 
+    margin: 10,
     padding: 10,
     backgroundColor: 'white',
     borderRadius: 5,
-    borderColor: '#2196F3', 
-    borderWidth: 1.5, 
+    borderColor: '#2196F3',
+    borderWidth: 1.5,
   },
   buttonTextNe: {
     color: 'black',
     textAlign: 'center',
-    textTransform: 'uppercase', 
+    textTransform: 'uppercase',
   },
   buttonText: {
     color: 'white',
     textAlign: 'center',
-    textTransform: 'uppercase', 
+    textTransform: 'uppercase',
   },
   buttonRow: {
-    flexDirection: 'row', 
-    marginTop: 20, 
+    flexDirection: 'row',
+    marginTop: 20,
   },
   input: {
     width: '100%',
@@ -255,52 +252,51 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     backgroundColor: 'white',
     borderRadius: 8,
-},
-cardContent: {
+  },
+  cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-},
-avatar: {
+  },
+  avatar: {
     margin: 5,
-},
-textContainer: {
+  },
+  textContainer: {
     marginLeft: 10,
     flex: 1,
-},
-name: {
-  textTransform: 'uppercase',
+  },
+  name: {
+    textTransform: 'uppercase',
     fontSize: 16,
-},
-description: {
+  },
+  description: {
     fontSize: 14,
-},
+  },
 
-
-modalBackground: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-},
-modalContainer: {
-  width: 300,
-  padding: 20,
-  backgroundColor: 'white',
-  borderRadius: 10,
-  alignItems: 'center',
-},
-tagContainer: {
-  backgroundColor: '#007AFF',
-  borderRadius: 20,
-  paddingVertical: 5,
-  paddingHorizontal: 10,
-  marginRight: 5,
-  marginBottom: 5,
-  marginTop: 5,
-},
-tagText: {
-  color: 'white',
-},
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  tagContainer: {
+    backgroundColor: '#007AFF',
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginRight: 5,
+    marginBottom: 5,
+    marginTop: 5,
+  },
+  tagText: {
+    color: 'white',
+  },
 });
 
 export default RouteInputPage;

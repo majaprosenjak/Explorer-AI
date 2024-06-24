@@ -5,12 +5,16 @@ import { firestore } from '../../firebaseConfig';
 import RoutePieChart from './RoutePieChart';
 import RouteLineChart from './RouteLineChart';
 import RouteBarChart from './RouteBarChart';
-import { useUser } from '../UserContext'; 
+import { useUser } from '../UserContext';
+import { useTranslation } from "react-i18next";
+
 
 
 const UserStatistics = () => {
   const [routesWalked, setRoutesWalked] = useState([]);
   const { user } = useUser();
+  const {t} = useTranslation();
+
 
   useEffect(() => {
     const fetchRoutesWalked = async () => {
@@ -70,21 +74,21 @@ const UserStatistics = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.cardHeading}>
-        <Text style={styles.heading}>Letna statistika</Text>
+        <Text style={styles.heading}>{t('ystat')}</Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.yearlyText}>Število prehojenih po mesecih</Text>
+        <Text style={styles.yearlyText}>{t('monthlyRoutes')}</Text>
         <RouteLineChart data={routesWalked} />
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.yearlyText}>Različne poti, ki ste jih prehodili</Text>
+        <Text style={styles.yearlyText}>{t('differentRoutes')}</Text>
         <RoutePieChart data={routesWalked} />
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.yearlyText}>Število minut, ki ste jih porabili za hojo po poteh po mesecih</Text>
+        <Text style={styles.yearlyText}>{t('minWalked')}</Text>
         <RouteBarChart data={routesWalked} />
       </View>
 

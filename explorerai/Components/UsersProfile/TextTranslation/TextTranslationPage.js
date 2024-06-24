@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, Keyboard, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, Keyboard, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useTranslation } from 'react-i18next';
+import SpeechGenerate from './SpeechGenerate';
+
 
 const TextDetectionComponent = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -11,6 +14,8 @@ const TextDetectionComponent = () => {
   const [translatedText, setTranslatedText] = useState('');
   const [toLanguage, setToLanguage] = useState('');
   const [openFrom, setOpenFrom] = useState(false);
+  const { t } = useTranslation(); 
+
 
   const analyzeImage = async (imageUri) => {
     try {
@@ -20,7 +25,7 @@ const TextDetectionComponent = () => {
       }
 
       // Google Cloud Vision API key
-      const apiKey = 'AIzaSyA40lu7XYSOMa4XZcjllF-1FBWos-yYkLI';
+      const apiKey = 'API_KEY';
       const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
 
       // Read the image file from local URI and convert it to base64
@@ -57,7 +62,6 @@ const TextDetectionComponent = () => {
     }
   };
 
-
   const translateText = async () => {
     console.log(toLanguage);
     if (!detectedText || !toLanguage) {
@@ -65,7 +69,7 @@ const TextDetectionComponent = () => {
     }
 
     try {
-        const API_KEY = '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';
+        const API_KEY = 'API_KEY';
         const textWithoutNewlines = detectedText.replace(/\n/g, ' ');
         const trimmedText = textWithoutNewlines.trim(); 
         console.log(trimmedText);
@@ -104,8 +108,6 @@ const TextDetectionComponent = () => {
         alert('Napaka pri prevajanju. Poskusite znova.');
     }
 };
-
-  
   
 
 const pickImage = async () => {
@@ -159,26 +161,28 @@ const takePhoto = async () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonRow}>
+        <View style={styles.buttonRow}>
           <TouchableOpacity onPress={pickImage} style={styles.button}>
-            <Text style={styles.buttonText}>Odpri galerijo</Text>
+            <Text style={styles.buttonText}>{t('tGallery')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={takePhoto} style={styles.button}>
-            <Text style={styles.buttonText}>Odpri kamero</Text>
+            <Text style={styles.buttonText}>{t('tCamera')}</Text>
           </TouchableOpacity>
         </View>
+
+
       <DropDownPicker
         open={openFrom}
         value={toLanguage}
         setOpen={setOpenFrom}
         setValue={setToLanguage}
-        placeholder="Izberite jezik"
+        placeholder={t('tPickLang')}
         items={[
-            { label: 'Angleščina', value: 'english' },
-            { label: 'Španščina', value: 'spanish' },
-            { label: 'Slovenščina', value: 'slovene' },
-            { label: 'Nemščina', value: 'german' },
-            { label: 'Italijanščina', value: 'italian' }
+            { label: t('tAng'), value: 'english' },
+            { label: t('tSpa'), value: 'spanish' },
+            { label: t('tSlo'), value: 'slovene' },
+            { label: t('tNem'), value: 'german' },
+            { label: t('tIta'), value: 'italian' }
         ]}
         onChangeValue={(item) => {
             if (item && item.value) {
@@ -187,24 +191,15 @@ const takePhoto = async () => {
         }}
         />
         <TouchableOpacity onPress={translateText} style={styles.button}>
-          <Text style={styles.buttonText}>Prevedi</Text>
+          <Text style={styles.buttonText}>{t('tTranslate')}</Text>
         </TouchableOpacity>
 
-      <ScrollView >
 
-
-
-        {imageUri && (
-            <Image
-              source={{ uri: imageUri }}
-              style={{ width: '100%', height: '30%', marginVertical: 20 }}
-            />
-          )}
-
+        <ScrollView >
           {detectedText !== '' && (
             <View style={styles.card}>
               <View style={styles.cardContent}>
-                  <Text style={{ marginTop: 10 }}>{detectedText}</Text>
+                <Text style={{ marginTop: 10 }}>{detectedText}</Text>
               </View>
             </View>    
           )}
@@ -212,12 +207,15 @@ const takePhoto = async () => {
           {translatedText !== '' && (
             <View style={styles.cardTrans}>
               <View style={styles.cardContent}>
-                  <Text style={{ marginTop: 10 }}>{translatedText}</Text>
+                <View style={styles.textContainer}>
+                  <Text style={styles.translatedText}>{translatedText}</Text>
+                  <SpeechGenerate initialText={translatedText} />
+                </View>
               </View>
             </View>   
           )}
-    </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
 
   );
 };
@@ -225,6 +223,10 @@ const takePhoto = async () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+  },
+  textContainer: {
+    flexDirection: 'column', 
+    alignItems: 'center', 
   },
   button: {
     margin: 10, 

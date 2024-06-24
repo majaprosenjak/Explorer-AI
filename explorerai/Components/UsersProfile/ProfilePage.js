@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, Text, Button } from 'react-native';
+import { StyleSheet, View, Alert, Text, Button, ScrollView } from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
 import LoginScreen from './LoginPage';
 import { Avatar } from 'react-native-paper';
 import ProfileCards from './ProfileCards';
-import { useUser } from './UserContext'; 
+import { useUser } from './UserContext';
+import { useTranslation } from 'react-i18next';
+
 
 const auth = getAuth();
 
 const ProfilePage = ({ navigation }) => {
   const { user, setUser } = useUser();  
   const [currentUser, setCurrentUser] = useState(null);
+  const { t } = useTranslation(); 
+
 
   useEffect(() => {
     if (currentUser) {
@@ -23,7 +27,6 @@ const ProfilePage = ({ navigation }) => {
       .then(() => {
         setCurrentUser(null);
         setUser(null); 
-        Alert.alert('Odjava', 'Uspešno ste se odjavili.');
         console.log('User signed out');
       })
       .catch((error) => {
@@ -41,7 +44,7 @@ const ProfilePage = ({ navigation }) => {
             <Text style={styles.userName}>{user}</Text>
           </View>
           <ProfileCards navigation={navigation} />
-          <Button title="Odjava" onPress={handleSignOut} />
+          <Button title={t('logout')} onPress={handleSignOut} />
         </View>
       ) : (
         <LoginScreen onUserLoggedIn={setCurrentUser} />
