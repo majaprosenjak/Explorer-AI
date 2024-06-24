@@ -1,31 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Modal, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
 
 
 const MonumentInputPage = ({ navigation, route }) => {
-  const { routeName, duration, description, addMonument } = route.params;
   const [monumentName, setMonumentName] = useState('');
   const [monumentDescription, setMonumentDescription] = useState('');
   const [address, setAddress] = useState('');
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const { t } = useTranslation(); 
+
 
   const onSearchAddress = () => {
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAwfLPfBqyBl6LoKqFZXP6MkbcjV0HTevY`)
+    console.log(route.params.monuments)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=API_KEY`)
       .then(response => response.json())
       .then(data => {
         if (data.results.length > 0) {
           const { lat, lng } = data.results[0].geometry.location;
           setSelectedCoordinates({ latitude: lat, longitude: lng });
         } else {
-          Alert.alert("Napaka", "Naslova ni bilo mogoče najti.");
+          Alert.alert("Error", "Address not found.");
           console.log('Address not found');
         }
       })
-      .catch(error => console.error('Error searching address:', error));
+      .catch(error => {
+        console.error('Error searching address:', error);
+        Alert.alert("Error", "Failed to search address. Please try again.");
+      });
   };
+
 
   const onSaveMonument = () => {
     if (selectedCoordinates) {
@@ -35,57 +41,48 @@ const MonumentInputPage = ({ navigation, route }) => {
         coordinates: selectedCoordinates,
       };
 
-      addMonument(monument);
-      setMonumentName('');
-      setMonumentDescription('');
-      setAddress('');
-      setSelectedCoordinates(null);
+      console.log(monument);
+      route.params.updateMonuments([...route.params.monuments, monument]); 
       navigation.goBack();
     } else {
-      Alert.alert("Napaka", "Dodajte lokacijo znamenitosti.");
+      Alert.alert("Error", "Please select a monument location.");
       console.log('No coordinates selected.');
     }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text>Ime znamenitosti</Text>
+      <Text>{t('addMName')}</Text>
       <TextInput
         style={styles.input}
         value={monumentName}
-        placeholder="Ime znamenitosti"
+        placeholder={t('addMName')}
         onChangeText={text => setMonumentName(text)}
       />
-      <Text>Opis znamenitosti</Text>
+      <Text>{t('addMDesc')}</Text>
       <TextInput
         style={styles.input}
         value={monumentDescription}
-        placeholder="Opis znamenitosti"
+        placeholder={t('addMDesc')}
         onChangeText={text => setMonumentDescription(text)}
       />
 
       <View style={styles.card}>
-          <View style={styles.cardContent}>
-            <Text style={styles.cardText}> {selectedCoordinates ?
-             `Koordinate: ${selectedCoordinates.latitude}, ${selectedCoordinates.longitude}` 
-             : "Lokacija znamenitosti še ni določena"}
-            </Text>
-          </View>
-      </View> 
-
-      
+        <View style={styles.cardContent}>
+          <Text style={styles.cardText}>{selectedCoordinates ?
+            `${t('addMcoordinates')}: ${selectedCoordinates.latitude}, ${selectedCoordinates.longitude}`
+            : t('cantFindAdress')}
+          </Text>
+        </View>
+      </View>
 
       <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.button}>
-        <Text style={styles.buttonText}>Lokacija znamenitosti</Text>
+        <Text style={styles.buttonText}>{t('addMLoc')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onSaveMonument} style={styles.button}>
-        <Text style={styles.buttonText}>Dodaj znamenitost</Text>
+        <Text style={styles.buttonText}>{t('addMAddM')}</Text>
       </TouchableOpacity>
-
-      
-
-      
 
       <Modal
         animationType="slide"
@@ -114,22 +111,23 @@ const MonumentInputPage = ({ navigation, route }) => {
           </MapView>
           <TextInput
             style={styles.input}
-            placeholder="Naslov"
+            placeholder={t('addMAddress')}
             value={address}
             onChangeText={text => setAddress(text)}
           />
 
           <TouchableOpacity onPress={onSearchAddress} style={styles.button}>
-            <Text style={styles.buttonText}>Išči</Text>
+            <Text style={styles.buttonText}>{t('addMSearch')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.button}>
-            <Text style={styles.buttonText}>Dodaj</Text>
+            <Text style={styles.buttonText}>{t('addMAdd')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

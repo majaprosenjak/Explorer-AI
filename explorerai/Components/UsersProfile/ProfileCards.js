@@ -1,44 +1,49 @@
 import React from 'react';
-import { Avatar, Card, Text, TouchableRipple } from 'react-native-paper';
+import { Avatar, Card, Text } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const LeftContentStatistics = props => <Avatar.Icon {...props} icon="chart-bar" backgroundColor="#2196F3" />
 const LeftContentRoute = props => <Avatar.Icon {...props} icon="map-marker" backgroundColor="#2196F3" />
 const LeftContentUsersRoutes = props => <Avatar.Icon {...props} icon="format-list-bulleted" backgroundColor="#2196F3" />
 const LeftContentTranslate = props => <Avatar.Icon {...props} icon="translate" backgroundColor="#2196F3" />
 
-const ProfileCards = ({ navigation }) => (
-  <View style={styles.container}>
-    <View style={styles.row}>
-        <Card style={styles.card} onPress={() => navigation.navigate('Statistika')}>
+const ProfileCards = ({ navigation }) => {
+  const { t } = useTranslation(); 
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.row}>
+        <Card style={styles.card} onPress={() => navigation.navigate(t('up-statistics'))}>
           <Card.Title left={LeftContentStatistics} />
           <Card.Content>
-            <Text variant="titleLarge">Statistika uporabe</Text>
+            <Text variant="titleLarge">{t('cardStatistics')}</Text> 
           </Card.Content>
         </Card>
-        <Card style={styles.card} onPress={() => navigation.navigate('Dodaj pot')}>
+        <Card style={styles.card} onPress={() => navigation.navigate(t('up-addRoute'))}>
           <Card.Title left={LeftContentRoute} />
           <Card.Content>
-            <Text variant="titleLarge">Vnos nove poti</Text>
+            <Text variant="titleLarge">{t('cardNewRoute')}</Text> 
           </Card.Content>
         </Card>
-    </View>
-    <View style={styles.row}>
-        <Card style={styles.card} onPress={() => navigation.navigate('Uporabnikove poti')}>
+      </View>
+      <View style={styles.row}>
+        <Card style={styles.card} onPress={() => navigation.navigate(t('up-userRoutes'))}>
           <Card.Title left={LeftContentUsersRoutes} />
           <Card.Content>
-            <Text variant="titleLarge">Pregled vaših poti</Text>
+            <Text variant="titleLarge">{t('cardRouteOverview')}</Text> 
           </Card.Content>
         </Card>
-        <Card style={styles.card} onPress={() => navigation.navigate('Prevod')}>
+        <Card style={styles.card} onPress={() => navigation.navigate(t('up-translate'))}>
           <Card.Title left={LeftContentTranslate} />
           <Card.Content>
-            <Text variant="titleLarge">Prevod</Text>
+            <Text variant="titleLarge">{t('cardTranslation')}</Text>
           </Card.Content>
         </Card>
+      </View>
     </View>
-  </View>
-);
+  );
+}
 
 const styles = StyleSheet.create({
   container: {

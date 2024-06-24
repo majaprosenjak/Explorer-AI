@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Alert, TouchableOpacity, Modal } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
+
 
 const RoutesPublished = ({ routesCreated }) => {
   const publishedRoutes = routesCreated.filter(route => route.published === true);
@@ -8,6 +10,8 @@ const RoutesPublished = ({ routesCreated }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [monumentCoordinates, setMonumentCoordinates] = useState([]);
+  const { t } = useTranslation(); 
+
 
   const handleRoutePress = (route) => {
     setSelectedRoute(route);
@@ -56,7 +60,7 @@ const RoutesPublished = ({ routesCreated }) => {
               <View style={styles.tagContainer}>
                 <Text style={styles.tagText}>{selectedRoute.tags}</Text>
               </View>
-              <Text>Znamenitosti:</Text>
+              <Text>{t('ur-monuments')}</Text>
               {selectedRoute.monuments && selectedRoute.monuments.length > 0 ? (
                 selectedRoute.monuments.map((monument, monumentIndex) => (
                   <View key={`modal-monument-${monumentIndex}`} style={styles.monumentContainer}>
@@ -65,7 +69,7 @@ const RoutesPublished = ({ routesCreated }) => {
                   </View>
                 ))
               ) : (
-                <Text>Ni znamenitosti</Text>
+                <Text>{t('ur-noMonuments')}</Text>
               )}
               <View style={styles.mapContainer}>
                 <MapView
@@ -89,7 +93,7 @@ const RoutesPublished = ({ routesCreated }) => {
                 </MapView>
               </View>
               <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>Zapri</Text>
+                <Text style={styles.closeButtonText}>{t('ur-close')}</Text>
               </TouchableOpacity>
             </ScrollView>
           )}
@@ -168,7 +172,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   tagContainer: {
     backgroundColor: '#007AFF',

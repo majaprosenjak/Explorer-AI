@@ -6,18 +6,24 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import RoutesDrafts from './RoutesDrafts'; 
 import RoutesPublished from "./RoutesPublished";
 import { useUser } from '../UserContext'; 
-
+import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 const UserRoutesPage = () => {
+  
+  const { t } = useTranslation(); 
+
   const { user } = useUser();
   const [routesCreated, setRoutesCreated] = useState([]);
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'osnutki', title: 'Osnutki Poti' },
-    { key: 'objavljene', title: 'Objavljene Poti' },
+    { key: 'osnutki', title: t('ur-drafts') },
+    { key: 'objavljene', title: t('ur-published') },
   ]);
+
+
+
 
   useEffect(() => {
     const fetchRoutesCreated = async () => {

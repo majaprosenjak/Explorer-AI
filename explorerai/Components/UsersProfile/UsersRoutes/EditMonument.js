@@ -3,6 +3,8 @@ import { View, Text, Modal, TextInput, TouchableOpacity, StyleSheet, Alert, Scro
 import { updateDoc, doc } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 import MapView, { Marker } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
+
 
 const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => {
   const [name, setName] = useState('');
@@ -10,6 +12,8 @@ const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => 
   const [address, setAddress] = useState('');
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useTranslation(); 
+
 
   useEffect(() => {
     if (selectedMonument) {
@@ -20,14 +24,14 @@ const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => 
   }, [selectedMonument]);
 
   const onSearchAddress = () => {
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAwfLPfBqyBl6LoKqFZXP6MkbcjV0HTevY`)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=API`)
       .then(response => response.json())
       .then(data => {
         if (data.results.length > 0) {
           const { lat, lng } = data.results[0].geometry.location;
           setSelectedCoordinates({ latitude: lat, longitude: lng });
         } else {
-          Alert.alert("Error", "Address not found.");
+          Alert.alert(t('cantFindAdress'));
         }
       })
       .catch(error => console.error('Error searching address:', error));
@@ -48,9 +52,9 @@ const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => 
       const monumentDocRef = doc(firestore, `routes/${selectedRoute.id}/monuments`, selectedMonument.id);
       await updateDoc(monumentDocRef, updatedMonument);
       onClose();
-      Alert.alert("Success", "Monument updated successfully.");
+      Alert.alert(t('ur-monumentUpdateSuccess'));
     } catch (e) {
-      Alert.alert("Error", "An error occurred. Please try again.");
+      Alert.alert('ur-routeUpdateError');
       console.error('Error updating the monument: ', e);
     }
   };
@@ -59,39 +63,39 @@ const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => 
     <Modal animationType="slide" transparent={true} visible={visible}>
       <View style={styles.modalContainer}>
         <ScrollView contentContainerStyle={styles.modalContent}>
-          <Text style={styles.modalTitle}>Urejanje znamenitosti</Text>
-          <Text>Ime znamenitosti</Text>
+          <Text style={styles.modalTitle}>{t('editMonument')}</Text>
+          <Text>{t('addMName')}</Text>
           <TextInput
             style={styles.input}
             value={name}
             onChangeText={text => setName(text)}
           />
-          <Text>Opis znamenitosti</Text>
+          <Text>{t('addMDesc')}</Text>
           <TextInput
             style={styles.input}
             value={description}
             onChangeText={text => setDescription(text)}
           />
-          <Text>Koordinate</Text>
+          <Text>{t('addMcoordinates')}</Text>
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <Text style={styles.cardText}>
                 {selectedCoordinates ?
                   `${selectedCoordinates.latitude}, ${selectedCoordinates.longitude}`
-                  : "Lokacija ni izbrana"}
+                  : t('addMNoLoc')}
               </Text>
             </View>
           </View>
 
           <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.button}>
-            <Text style={styles.buttonText}>Izberi lokacijo</Text>
+            <Text style={styles.buttonText}>{t('pickLocation')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.buttonText}>Shrani spremembe</Text>
+            <Text style={styles.buttonText}>{t('ur-saveChanges')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Zapri</Text>
+            <Text style={styles.closeButtonText}>{t('ur-close')}</Text>
           </TouchableOpacity>
         </ScrollView>
 
@@ -120,15 +124,15 @@ const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => 
             </MapView>
             <TextInput
               style={styles.input}
-              placeholder="Naslov"
+              placeholder={t('addMAddress')}
               value={address}
               onChangeText={text => setAddress(text)}
             />
             <TouchableOpacity onPress={onSearchAddress} style={styles.button}>
-              <Text style={styles.buttonText}>Išči</Text>
+              <Text style={styles.buttonText}>{t('addMSearch')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.button}>
-              <Text style={styles.buttonText}>Dodaj lokacijo</Text>
+              <Text style={styles.buttonText}>{t('addMAdd')}</Text>
             </TouchableOpacity>
           </View>
         </Modal>
@@ -181,7 +185,6 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: 'black',
-    fontWeight: 'bold',
     textTransform: 'uppercase',
 
   },
@@ -197,7 +200,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
   card: {

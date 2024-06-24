@@ -6,6 +6,8 @@ import EditRoute from './EditRoute';
 import EditMonument from './EditMonument';
 import { updateDoc, doc, deleteDoc, collection, query, where, getDocs, arrayRemove } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig'; 
+import { useTranslation } from 'react-i18next';
+
 
 const RoutesDrafts = ({ routesCreated, user }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,6 +17,7 @@ const RoutesDrafts = ({ routesCreated, user }) => {
   const [showEditMonument, setShowEditMonument] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
+  const { t } = useTranslation(); 
 
   const draftRoutes = routesCreated.filter(route => route.published === false);
 
@@ -43,10 +46,7 @@ const RoutesDrafts = ({ routesCreated, user }) => {
     });
   });
 
-  const onMarkerPress = (marker) => {
-    Alert.alert(marker.name, marker.description);
-  };
-
+  
   const handleMonumentPress = (monument) => {
     setSelectedMonument(monument);
     setShowEditMonument(true);
@@ -61,9 +61,9 @@ const RoutesDrafts = ({ routesCreated, user }) => {
       const routeDocRef = doc(firestore, "routes", selectedRoute.id);
       await updateDoc(routeDocRef, { published: true });
       console.log('Published route:', selectedRoute.id);
-      Alert.alert( "Uspešno ste objavili pot.");
+      Alert.alert(t('ur-publishRouteSuccess'));
     } catch (e) {
-      Alert.alert("Napaka", "Prišlo je do napake. Poskusite ponovno.");
+      Alert.alert(t('ur-publishRouteError'));
       console.error('Error publishing the route', e);
     }
   }
@@ -94,7 +94,7 @@ const RoutesDrafts = ({ routesCreated, user }) => {
       await updateDoc(userDocRef, {
         routesCreated: arrayRemove(routeDocRef)
       });
-      Alert.alert("Uspešno ste izbrisali pot:", selectedRoute.name);
+      Alert.alert(t('ur-deleteRouteSuccess'), selectedRoute.name);
       closeModal()
 
       console.log('Removed route reference from user document:', userId);
@@ -137,7 +137,7 @@ const RoutesDrafts = ({ routesCreated, user }) => {
                 </View>
               </View>
               
-              <Text>Znamenitosti:</Text>
+              <Text>{t('ur-monuments')}</Text>
               {selectedRoute.monuments && selectedRoute.monuments.length > 0 ? (
                 selectedRoute.monuments.map((monument, monumentIndex) => (
                   <View key={`modal-monument-${monumentIndex}`} style={styles.monumentContainer}>
@@ -149,19 +149,19 @@ const RoutesDrafts = ({ routesCreated, user }) => {
                   </View>
                 ))
               ) : (
-                <Text>Ni znamenitosti</Text>
+                <Text>{t('ur-noMonuments')}</Text>
               )}
 
               
               
               <TouchableOpacity style={styles.draftButton} onPress={() => handlePublishPress(selectedRoute)}>
-                <Text style={styles.draftButtonText}>Objavi pot</Text>
+                <Text style={styles.draftButtonText}>{t('ur-publishRoute')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.draftButton} onPress={onConfirmSaveRoute}>
-                <Text style={styles.draftButtonText}>Izbriši pot</Text>
+                <Text style={styles.draftButtonText}>{t('ur-deleteRoute')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.draftButtonClose} onPress={closeModal}>
-                <Text style={styles.draftButtonCloseText}>Zapri</Text>
+                <Text style={styles.draftButtonCloseText}>{t('ur-close')}</Text>
               </TouchableOpacity>
             </ScrollView>
           )}
@@ -175,13 +175,13 @@ const RoutesDrafts = ({ routesCreated, user }) => {
       >
         <View style={styles.confirmModalBackground}>
           <View style={styles.confirmModalContainer}>
-            <Text>Ste prepričani, da želite izbrisati pot?</Text>
+            <Text>{t('ur-deleteAreYouSure')}</Text>
             <View style={styles.buttonRow}>
             <TouchableOpacity onPress={() => handleDeletePress(selectedRoute)} style={styles.confirmButton}>
-              <Text style={styles.confirmButtonText}>Da</Text>
+              <Text style={styles.confirmButtonText}>{t('addYes')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setConfirmModalVisible(false)} style={styles.buttonNe}>
-              <Text style={styles.buttonTextNe}>Ne</Text>
+              <Text style={styles.buttonTextNe}>{t('addNo')}</Text>
             </TouchableOpacity>
           </View>
           </View>
@@ -254,13 +254,11 @@ const styles = StyleSheet.create({
   },
   draftButtonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
     textTransform: 'uppercase',
 
   },
   draftButtonCloseText: {
     color: 'black',
-    fontWeight: 'bold',
     textTransform: 'uppercase',
 
   },
@@ -312,7 +310,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },confirmModalContainer: {
+  },
+  confirmModalContainer: {
     width: 300,
     padding: 20,
     backgroundColor: 'white',
