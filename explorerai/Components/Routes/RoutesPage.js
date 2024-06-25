@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Button } from 'react-native';
-import { collection, getDocs, query, where, doc } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from "../firebaseConfig";
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 
 const RoutesPage = () => {
   const [routes, setRoutes] = useState([]);
-  const [expandedRoute, setExpandedRoute] = useState(null); 
+  const [expandedRoute, setExpandedRoute] = useState(null);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchRoutesPublished = async () => {
@@ -17,7 +17,7 @@ const RoutesPage = () => {
         const routesRef = collection(firestore, 'routes');
         const q = query(routesRef, where('published', '==', true));
         const querySnapshot = await getDocs(q);
-        
+
         if (querySnapshot.empty) {
           console.log('No routes available.');
           return;
@@ -40,13 +40,13 @@ const RoutesPage = () => {
     fetchRoutesPublished();
   }, []);
 
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const toggleExpand = (routeId) => {
     if (expandedRoute === routeId) {
-      setExpandedRoute(null); 
+      setExpandedRoute(null);
     } else {
-      setExpandedRoute(routeId); 
+      setExpandedRoute(routeId);
     }
   };
 
@@ -54,7 +54,16 @@ const RoutesPage = () => {
     navigation.navigate(t('monuments-map'), { route });
   };
 
+  const isWithinSeasonalDates = (seasonalFrom, seasonalTo) => {
+    const currentDate = new Date();
+    const fromDate = new Date(seasonalFrom);
+    const toDate = new Date(seasonalTo);
+    return currentDate >= fromDate && currentDate <= toDate;
+  };
+
   const renderMonumentsList = (monuments, route) => {
+    const canStart = !route.seasonal || isWithinSeasonalDates(route.seasonalFrom, route.seasonalTo);
+
     return (
       <View style={styles.monumentsContainer}>
         <Text style={styles.monumentsHeader}>Monuments</Text>
@@ -67,16 +76,20 @@ const RoutesPage = () => {
           </View>
         ))}
 
-        <Button
-          title="Start"
-          onPress={() => handleStartRoute(route)}
-        />
+        {canStart ? (
+          <Button
+            title="Start"
+            onPress={() => handleStartRoute(route)}
+          />
+        ) : (
+          <Text style={styles.notAvailableText}>This route is not currently available.</Text>
+        )}
       </View>
     );
   };
 
   const truncateDescription = (description) => {
-    const maxLength = 100; 
+    const maxLength = 100;
     if (description.length > maxLength) {
       return description.substring(0, maxLength) + '...';
     }
@@ -85,10 +98,14 @@ const RoutesPage = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {routes.map(route => (
+      {routes.map((route, index) => (
         <TouchableOpacity
           key={route.id}
-          style={[styles.card, expandedRoute === route.id && styles.expandedCard]}
+          style={[
+            styles.card, 
+            expandedRoute === route.id && styles.expandedCard,
+            index === routes.length - 1 && styles.lastCard 
+          ]}
           onPress={() => toggleExpand(route.id)}
           activeOpacity={0.8}
         >
@@ -105,6 +122,12 @@ const RoutesPage = () => {
           <Text style={styles.name}>{route.name}</Text>
           <Text style={styles.description}>{route.description}</Text>
           <Text style={styles.info}>Duration: {route.duration}</Text>
+          {route.seasonal && (
+            <View>
+              <Text style={styles.info}>Seasonal from: {route.seasonalFrom}</Text>
+              <Text style={styles.info}>Seasonal to: {route.seasonalTo}</Text>
+            </View>
+          )}
           <Text style={styles.info}>Monuments: {route.monuments ? route.monuments.length : 0}</Text>
           
           {expandedRoute === route.id && route.monuments && route.monuments.length > 0 && (
@@ -132,10 +155,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
-    position: 'relative', 
+    position: 'relative',
   },
   expandedCard: {
-    paddingBottom: 20, 
+    paddingBottom: 20,
+  },
+  lastCard: {
+    marginBottom: 40, 
   },
   publicBadge: {
     position: 'absolute',
@@ -195,6 +221,11 @@ const styles = StyleSheet.create({
   monumentDescription: {
     fontSize: 14,
     color: '#888',
+  },
+  notAvailableText: {
+    color: '#b32727', 
+    fontWeight: 'bold',
+    marginTop: 10,
   },
 });
 
