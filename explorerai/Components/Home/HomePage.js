@@ -1,65 +1,78 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Alert, Text, TouchableOpacity, Button, Modal, FlatList } from 'react-native';
-import i18next, { languageResources } from '../../services/i18next';
-import { useTranslation } from 'react-i18next';
-import languagesList from '../../services/languagesList.json';
-import { changeLanguage } from 'i18next';
+import React from 'react';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import SeasonalRoutes from './SeasonalRoutes';
+import MostPopularRoute from './MostPopularRoute';
 
-const HomePage = () => {
+const HomePage = ({ navigation }) => {
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <SeasonalRoutes />
 
-  const [visible, setVisible] = useState(false);
-  const {t} = useTranslation();
-
-  const changeLang = (lang) => {
-    i18next.changeLanguage(lang);
-    setVisible(false);
-  }
-
-    return (
-      <View style={styles.container}>
-        <Modal visible={visible} onRequestClose={() => setVisible(false)}>
-          <View style={styles.languageList}>
-            <FlatList data={Object.keys(languageResources)} renderItem={({item}) => 
-            <TouchableOpacity style={styles.languageButton} onPress={() => changeLang(item)}>
-              <Text style={styles.languageName}>{languagesList[item].nativeName}</Text>
-            </TouchableOpacity>}/>
-          </View>
-        </Modal>
-        <Text>{t('welcome')}</Text>
-        <Button style={styles.changeLanguageButton} title={t('change-language')} onPress={() => setVisible(true)} />
+      <View style={styles.card}><Text style={styles.headerText}>Se nemoreš odločiti kakšno pot bi prehodil?</Text>
+        <Text style={styles.subHeaderText}>Brez strahu! Pri tem ti lahko pomagamo mi!</Text>
+        <Text style={styles.subHeaderText}>Izpolni naš kratek kviz o tem, kaj imaš rad inkako se trenutno počutiš, mi pa ti bomo 
+          predlagali kateri tip poti je zatenajbolj primeren.
+        </Text>
+        <TouchableOpacity style={styles.questionOptionsContainer} onPress={() => navigation.navigate('quiz-page')}>
+          <Text style={styles.questionOptions}>Pojdi na kviz</Text>
+        </TouchableOpacity>
       </View>
-    );
-  };
+
+      <MostPopularRoute />
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    backgroundColor: '#EDF5FC',
+    padding: 20,
+  },
+  textContainer: {
+    marginTop: 20,
+  },
+  subHeaderText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  questionOptionsContainer: {
+    borderRadius: 10,
+    marginTop: 15,
+    backgroundColor: "#007BFF",
+    textAlign: "center",
+    padding: 5,
+    width: 200,
+    height: 50,
+    alignSelf: "center",
+    justifyContent: "center",
+  },
+
+  questionOptions: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#EDF5FC',
-      alignItems: "center",
-      justifyContent: "center", //spremeni na "top"
-    },
-    map: {
-      width: '100%',
-      height: '100%',
-    },
-    languageList: {
-      flex: 1,
-      justifyContent: "center",
-      padding: 10,
-      backgroundColor: "#6258e8",
-    },
-    changeLanguageButton: {
-      padding: 10,
-    },
-    languageButton: {
-      padding: 10,
-      borderBottomColor: "#dddddd",
-      borderBottomWidth: 1,
-    },
-    languageName: {
-      fontSize: 16,
-      color: "white",
-    },
-  });
-  
-  export default HomePage;
+  card: {
+    backgroundColor: '#dcedfc',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 10,
+    marginBottom: 10,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 20,
+    textAlign: "center",
+  },
+});
+
+export default HomePage;
