@@ -72,13 +72,13 @@ const Quiz = ({navigation}) => {
     } else {
       if ((natureCounter > sportCounter) && (natureCounter > cultureCounter)) {
         setQuizResult(t("questionResultNature"));
-        setQuizResultDescription("Radi ste v naravi.");
+        setQuizResultDescription("Radi se umaknete izven mesta v naravo, kjer si lahko v miru spočijete.");
       } else if ((sportCounter > natureCounter) && (sportCounter > cultureCounter)) {
         setQuizResult(t("questionResultSport"));
-        setQuizResultDescription("Ste zelo aktivni.");
+        setQuizResultDescription("Ste polni energije, ki jo z veseljem pokurite z izvajanjem različnih športnih aktivnosti.");
       } else {
         setQuizResult(t("questionResultCulture"));
-        setQuizResultDescription("Na potovanju se radi učite.");
+        setQuizResultDescription("Na potovanju se radi učite in raziskujete lokalno kulturo.");
       }
       setShowScore(true);
     }
@@ -115,7 +115,7 @@ const Quiz = ({navigation}) => {
   const onShare = async () => {
     try {
       const result = await Share.share({
-        message: 'Na ExplorerAI kvizu sem dobil ' + quizResult + " pot. Obišči ExplorerAI še ti!",
+        message: 'Na ExplorerAI kvizu sem dobil ' + quizResult + " pot. Obišči ExplorerAI še ti in reši kviz!",
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
