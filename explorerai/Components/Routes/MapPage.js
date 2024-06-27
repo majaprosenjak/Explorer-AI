@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, ScrollView, Alert } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
+import { doc, updateDoc, increment } from 'firebase/firestore';
+import { firestore } from "../firebaseConfig";
 
 const INITIAL_REGION = {
   latitude: 46.5547,
@@ -14,7 +16,7 @@ const INITIAL_REGION = {
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyDcJdWLYO_2ueX-G6D9Z-CoF_dFfbsb7rA';
 
-const MapPage = ({ route }) => {
+const MapPage = ({ route, navigation }) => {
   const routeDetails = route?.params?.route || {};
   const monuments = routeDetails.monuments || [];
   const [totalDuration, setTotalDuration] = useState(0);
@@ -22,8 +24,17 @@ const MapPage = ({ route }) => {
   const [expanded, setExpanded] = useState(false);
   const animatedHeight = useState(new Animated.Value(60))[0];
 
+  const [timer, setTimer] = useState(0);
+  const timerRef = useRef(null);
+
   useEffect(() => {
     calculateTotalDuration();
+
+    timerRef.current = setInterval(() => {
+      setTimer(prevTimer => prevTimer + 1);
+    }, 1000);
+
+    return () => clearInterval(timerRef.current);
   }, [monuments]);
 
   const calculateTotalDuration = async () => {
@@ -78,12 +89,25 @@ const MapPage = ({ route }) => {
     setExpanded(!expanded);
   };
 
-  const renderMonument = ({ item }) => (
-    <View style={styles.monumentItem}>
-      <Text style={styles.monumentName}>{item.name}</Text>
-      <Text style={styles.monumentDescription}>{item.description}</Text>
-    </View>
-  );
+  const finishWalking = async () => {
+    clearInterval(timerRef.current);
+    const walkingTime = timer;
+
+    try {
+      const routeDocRef = doc(firestore, "routes", routeDetails.id);
+      await updateDoc(routeDocRef, { walkedCounter: increment(1) });
+
+      Alert.alert(
+        'Congratulations!',
+        `You have completed the walk.\nTotal walking time: ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} sec`,
+        [
+          { text: 'OK', onPress: () => navigation.navigate("routes-page") },
+        ]
+      );
+    } catch (error) {
+      console.error('Error updating walkedCounter:', error);
+    }
+  };
 
   const CustomMarker = ({ number }) => (
     <Svg height={50} width={30} viewBox="0 0 24 30">
@@ -150,7 +174,7 @@ const MapPage = ({ route }) => {
           <Text style={styles.cardNumber}>{monuments.length}</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Total Duration</Text>
+          <Text style={styles.cardTitle}>Walking Duration</Text>
           <Text style={styles.cardNumber}>{Math.ceil(totalDuration / 60)} min</Text>
         </View>
         <View style={styles.card}>
@@ -181,6 +205,13 @@ const MapPage = ({ route }) => {
           </ScrollView>
         )}
       </Animated.View>
+
+      <View style={styles.timerContainer}>
+        <Text style={styles.timerText}>{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</Text>
+        <TouchableOpacity style={styles.finishButton} onPress={finishWalking}>
+          <Text style={styles.finishButtonText}>Finish</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -277,6 +308,42 @@ const styles = StyleSheet.create({
   monumentDescription: {
     fontSize: 14,
     color: '#666',
+  },
+  timerContainer: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#007BFF',
+    marginRight: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  finishButton: {
+    backgroundColor: '#FF0000',
+    paddingVertical: 17,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  finishButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

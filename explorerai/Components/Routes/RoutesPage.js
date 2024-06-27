@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Pressable } from 'react-native'; 
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from "../firebaseConfig";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 
 const RoutesPage = () => {
   const [routes, setRoutes] = useState([]);
   const [expandedRoute, setExpandedRoute] = useState(null);
+  const isFocused = useIsFocused(); 
 
   const { t } = useTranslation();
 
@@ -38,7 +39,7 @@ const RoutesPage = () => {
     };
 
     fetchRoutesPublished();
-  }, []);
+  }, [isFocused]);
 
   const navigation = useNavigation();
 
@@ -66,7 +67,7 @@ const RoutesPage = () => {
 
     return (
       <View style={styles.monumentsContainer}>
-        <Text style={styles.monumentsHeader}>Monuments</Text>
+        <Text style={styles.monumentsHeader}>Monuments:</Text>
         {monuments.map((monument, index) => (
           <View key={index} style={styles.monumentItem}>
             <Text style={styles.monumentName}>{monument.name}</Text>
@@ -77,10 +78,12 @@ const RoutesPage = () => {
         ))}
 
         {canStart ? (
-          <Button
-            title="Start"
+          <Pressable
+            style={styles.startButton} 
             onPress={() => handleStartRoute(route)}
-          />
+          >
+            <Text style={styles.startButtonText}>Start</Text>
+          </Pressable>
         ) : (
           <Text style={styles.notAvailableText}>This route is not currently available.</Text>
         )}
@@ -122,6 +125,7 @@ const RoutesPage = () => {
           <Text style={styles.name}>{route.name}</Text>
           <Text style={styles.description}>{route.description}</Text>
           <Text style={styles.info}>Duration: {route.duration}</Text>
+          <Text style={styles.info}>Walked: {route.walkedCounter}</Text>
           {route.seasonal && (
             <View>
               <Text style={styles.info}>Seasonal from: {route.seasonalFrom}</Text>
@@ -226,6 +230,19 @@ const styles = StyleSheet.create({
     color: '#b32727', 
     fontWeight: 'bold',
     marginTop: 10,
+  },
+  startButton: {
+    backgroundColor: '#007BFF',
+    borderRadius: 5, 
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  startButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
