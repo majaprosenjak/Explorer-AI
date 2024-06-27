@@ -14,8 +14,11 @@ const Quiz = ({navigation}) => {
   const [showScore, setShowScore] = useState(false);
   const [quizResult, setQuizResult] = useState("");
   const [quizResultDescription, setQuizResultDescription] = useState("");
-  const [suggestedRoute, setSuggestedRoute] = useState("");
   const [questionCounter, setQuestionCounter] = useState(0);
+  const [sportRoutes, setSportRoutes] = useState([]);
+  const [natureRoutes, setNatureRoutes] = useState([]);
+  const [cultureRoutes, setCultureRoutes] = useState([]);
+  const [selectedRoutes, setSelectedRoutes] = useState([]);
 
   const quizQuestions = [
     {
@@ -53,17 +56,16 @@ const Quiz = ({navigation}) => {
       setNatureCounter(prev => prev + 1);
       const nextQuestionCounter = questionCounter + 1;
         setQuestionCounter(nextQuestionCounter);
-        console.log(questionCounter);
+
     } else if (selectedAnswer === quizQuestions[currentQuestion].options[1]) {
       setSportCounter(prev => prev + 1);
       const nextQuestionCounter = questionCounter + 1;
         setQuestionCounter(nextQuestionCounter);
-        console.log(questionCounter);
+
     } else {
       setCultureCounter(prev => prev + 1);
       const nextQuestionCounter = questionCounter + 1;
         setQuestionCounter(nextQuestionCounter);
-        console.log(questionCounter);
     }
 
     const nextQuestion = currentQuestion + 1;
@@ -72,13 +74,19 @@ const Quiz = ({navigation}) => {
     } else {
       if ((natureCounter > sportCounter) && (natureCounter > cultureCounter)) {
         setQuizResult(t("questionResultNature"));
-        setQuizResultDescription("Radi se umaknete izven mesta v naravo, kjer si lahko v miru spočijete.");
+        setQuizResultDescription(t("quiz-nature-description"));
+        setSelectedRoutes(natureRoutes)
+
       } else if ((sportCounter > natureCounter) && (sportCounter > cultureCounter)) {
         setQuizResult(t("questionResultSport"));
-        setQuizResultDescription("Ste polni energije, ki jo z veseljem pokurite z izvajanjem različnih športnih aktivnosti.");
+        setQuizResultDescription(t("quiz-sport-description"));
+        setSelectedRoutes(sportRoutes);
+
       } else {
         setQuizResult(t("questionResultCulture"));
-        setQuizResultDescription("Na potovanju se radi učite in raziskujete lokalno kulturo.");
+        setQuizResultDescription(t("quiz-culture-description"));
+        setSelectedRoutes(cultureRoutes);
+
       }
       setShowScore(true);
     }
@@ -97,13 +105,26 @@ const Quiz = ({navigation}) => {
         }
 
         const fetchedRoutes = [];
+        const fetchedSportRoutes = [];
+        const fetchedNatureRoutes = [];
+        const fetchedCultureRoutes = [];
         for (const doc of querySnapshot.docs) {
           const routeData = { id: doc.id, ...doc.data() };
           const monumentsSnapshot = await getDocs(collection(firestore, `routes/${doc.id}/monuments`));
           routeData.monuments = monumentsSnapshot.docs.map(monumentDoc => monumentDoc.data());
           fetchedRoutes.push(routeData);
-        }
 
+          if (routeData.tags && (routeData.tags.includes("sport") || routeData.tags.includes("šport"))) {
+            fetchedSportRoutes.push(routeData);
+          } else if (routeData.tags && (routeData.tags.includes("nature") || routeData.tags.includes("narava"))) {
+            fetchedNatureRoutes.push(routeData);
+          } else if (routeData.tags && (routeData.tags.includes("kultura") || routeData.tags.includes("culture"))) {
+            fetchedCultureRoutes.push(routeData);
+          }
+        }
+        setSportRoutes(fetchedSportRoutes);
+        setNatureRoutes(fetchedNatureRoutes);
+        setCultureRoutes(fetchedCultureRoutes);
         setRoutes(fetchedRoutes);
       } catch (error) {
         console.error('Error fetching routes:', error);
@@ -115,7 +136,7 @@ const Quiz = ({navigation}) => {
   const onShare = async () => {
     try {
       const result = await Share.share({
-        message: 'Na ExplorerAI kvizu sem dobil ' + quizResult + " pot. Obišči ExplorerAI še ti in reši kviz!",
+        message: t("share-message-beginning") + quizResult + t("share-message-ending"),
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -138,22 +159,22 @@ const Quiz = ({navigation}) => {
           ListHeaderComponent={
             <View style={styles.resultsStyle}>
               <Text style={styles.resultsStyle}>{t("routeChoice")} {quizResult}</Text>
-              <Text style={styles.resultsDescStyle}>{quizResultDescription}</Text>
-              <Text style={styles.resultsRec}>{t("recommendedRoutes")} {suggestedRoute}</Text>
+              <Text style={styles.resultsDescriptionStyle}>{quizResultDescription}</Text>
+              <Text style={styles.resultsRecommendText}>{t("recommendedRoutes")}</Text>
             </View>
           }
-          data={routes}
+          data={selectedRoutes}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text style={styles.routeName}>{item.name}</Text>
               <Text style={styles.routeDescription}>{item.description}</Text>
-              <Text style={styles.routeInfo}>Trajanje: {item.duration}</Text>
-              <Text style={styles.routeInfo}>Znamenitosti: {item.monuments ? item.monuments.length : 0}</Text>
+              <Text style={styles.routeInfo}>{t("estimated-duration")} {item.duration}</Text>
+              <Text style={styles.routeInfo}>{t("ur-monuments")} {item.monuments ? item.monuments.length : 0}</Text>
             </View>
           )}
           ListFooterComponent={
-            <Button style={styles.buttonShare} onPress={onShare} title="Prijatelju pošlji rezultat kviza" />
+            <Button style={styles.shareBtn} onPress={onShare} title={t("share-btn-title")} />
           }
         />
       ) : (
@@ -163,8 +184,8 @@ const Quiz = ({navigation}) => {
         <FlatList
           ListHeaderComponent={
             <View style={styles.questionContainer}>
-              <Text style={styles.questionStyle}>{t("question")} {questionCounter + 1}</Text>
-              <Text style={styles.questionStyle}>{quizQuestions[currentQuestion]?.question}</Text>
+              <Text style={styles.questionTextStyle}>{t("question")} {questionCounter + 1}</Text>
+              <Text style={styles.questionTextStyle}>{quizQuestions[currentQuestion]?.question}</Text>
               {quizQuestions[currentQuestion]?.options.map((item, index) => (
                 <TouchableOpacity key={index} style={styles.questionOptionsContainer} onPress={() => handleAnswer(item)}>
                   <Text style={styles.questionOptions}>{item}</Text>
@@ -176,9 +197,9 @@ const Quiz = ({navigation}) => {
           keyExtractor={(_, index) => index.toString()}
           renderItem={null}
         />
-        {/* <TouchableOpacity style={styles.goBackBtn} onPress={() => navigation.navigate('home-page')}>
-          <Text style={styles.goBackBtnText}>Nazaj</Text>
-        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.goBackBtn} onPress={() => navigation.navigate(t('home-page'))}>
+          <Text style={styles.goBackBtnText}>{t("back")}</Text>
+        </TouchableOpacity> 
         </View>
       )}
     </View>
@@ -204,10 +225,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     textAlign: "center",
   },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
   questionContainer: {
       padding: 10,
       margin: 10,
@@ -231,7 +248,7 @@ const styles = StyleSheet.create({
       textAlign: "center",
       padding: 5,
   },
-  questionStyle: {
+  questionTextStyle: {
       fontSize: 20,
       alignSelf: 'center',
       fontWeight: 'bold',
@@ -243,13 +260,13 @@ const styles = StyleSheet.create({
     margin: 10,
     fontWeight: "bold",
   },
-  resultsDescStyle: {
+  resultsDescriptionStyle: {
     fontSize: 15,
     alignSelf: 'center',
     padding: 5,
     margin: 10,
   },
-  resultsRec: {
+  resultsRecommendText: {
     fontSize: 18,
     alignSelf: 'center',
     fontWeight: "bold",
@@ -287,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderColor: "black",
   },
-  buttonShare: {
+  shareBtn: {
     margin: 10,
     marginBottom: 10,
   },

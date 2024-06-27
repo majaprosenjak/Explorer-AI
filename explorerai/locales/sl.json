@@ -115,11 +115,38 @@
     "ur-monumentUpdateSuccess": "Uspešno ste posodobili znamenitost",
     "editMonument": "Uredi znamenitosti",
     "pickLocation": "Izberi lokacijo",
-    "logout": "Odjava"
-
-
-
-
-
-    
+    "logout": "Odjava",
+    "quiz-promotion-header": "Se nemoreš odločiti kakšno pot bi prehodil?",
+    "quiz-promotion-tagline": "Brez strahu! Pri tem ti lahko pomagamo mi!",
+    "quiz-promotion-description": "Izpolni naš kratek kviz o tem, kaj imaš rad in kako se trenutno počutiš, mi pa ti bomo predlagali kateri tip poti je zate najbolj primeren.",
+    "quiz-go-to-btn": "Pojdi na kviz",
+    "quiz-sport-description": "Ste polni energije, ki jo z veseljem pokurite z izvajanjem različnih športnih aktivnosti.",
+    "quiz-nature-description": "Radi se umaknete izven mesta v naravo, kjer si lahko v miru spočijete.",
+    "quiz-culture-description": "Na potovanju se radi učite in raziskujete lokalno kulturo.",
+    "share-message-beginning": "Na ExplorerAI kvizu sem dobil ",
+    "share-message-ending": ". Obišči ExplorerAI aplikacijo še ti in reši kviz!",
+    "share-btn-title": "Deli rezultat kviza",
+    "seasonal-routes-promotion-header": "Trenutno popularno - Sezonske Poti!",
+    "seasonal-routes-promotion-tagline": "Pohiti, te poti so aktivne le določen čas!",
+    "estimated-duration": "Predvideno trajanje:",
+    "active-until": "Aktivna do:",
+    "popular-routes-promotion-header": "Naši uporabniki vedo, kaj je najboljše",
+    "popular-routes-promotion-tagline": "Preveri pot, ki je na naši aplikaciji NAJPOPULARNEJŠA",
+    "quiz-page": "Kviz",
+    "most-popular": "Najpopularnejša",
+    "all-routes": "Vse poti",
+    "back": "Pojdi nazaj",
+    "start": "Začeni",
+    "route-unavailable": "Ta pot trenutno ni na voljo.",
+    "walked": "Število prehodov poti:",
+    "seasonal-from": "Aktivna od:",
+    "seasonal-to": "Aktivna do:",
+    "public": "Javna",
+    "seasonal": "Sezonska",
+    "congratulations": "Čestitamo",
+    "route-finish-message": "Zaključil si pot. Hodil si:",
+    "finish": "Končaj",
+    "monuments": "Znamenitosti",
+    "walking-duration": "Čas hoje",
+    "total-distance": "Skupna razdalja"
 }

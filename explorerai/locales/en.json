@@ -115,10 +115,38 @@
     "ur-monumentUpdateSuccess": "You have successfully updated the monument",
     "editMonument": "Edit monuments",
     "pickLocation": "Pick location",
-    "logout": "Logout"
-
-
-
-
-
+    "logout": "Logout",
+    "quiz-promotion-header": "Can't decide which route to walk?",
+    "quiz-promotion-tagline": "No worries! We can help you with that!",
+    "quiz-promotion-description": "Take our quiz about what you like and how you feel and we will tell you what type of route we recommend you take.",
+    "quiz-go-to-btn": "Go to quiz",
+    "quiz-sport-description": "You are full of energy, which you like to burn by doing different sports activities.",
+    "quiz-nature-description": "You like to get away from the city to the nature, where you can relax in peace.",
+    "quiz-culture-description": "While travelling you like to learn and discover local culture.",
+    "share-message-beginning": "On ExplorerAI quiz I got ",
+    "share-message-ending": ". Visit ExplorerAI app and solve the quiz!",
+    "share-btn-title": "Send quiz results",
+    "seasonal-routes-promotion-header": "Currently Popular - Seasonal Routes!",
+    "seasonal-routes-promotion-tagline": "Hurry, these routes are active for only limited amount of time!",
+    "estimated-duration": "Estimated duration:",
+    "active-until": "Active until:",
+    "popular-routes-promotion-header": "Our users know what's best",
+    "popular-routes-promotion-tagline": "Check out the route, that is THE MOST POPULAR on our app",
+    "quiz-page": "Quiz",
+    "most-popular": "Most popular",
+    "all-routes": "All routes",
+    "back": "Go back",
+    "start": "Start",
+    "route-unavailable": "This route is not currently available.",
+    "walked": "Times walked:",
+    "seasonal-from": "Active from:",
+    "seasonal-to": "Active until:",
+    "public": "Public",
+    "seasonal": "Seasonal",
+    "congratulations": "Congratulations",
+    "route-finish-message": "You have completed the route. You walked:",
+    "finish": "Finish",
+    "monuments": "Monuments",
+    "walking-duration": "Walking duration",
+    "total-distance": "Total distance"
 }

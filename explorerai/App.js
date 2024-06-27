@@ -64,11 +64,14 @@ function App() {
               headerRight: () => <HeaderButton openModal={openModal} />
             })}
           >
-            <Tab.Screen name="ExplorerAI">
+            <Tab.Screen name="ExplorerAI" options={{ headerShown: false }} >
               {() => (
                 <SettingsStack.Navigator>
-                  <SettingsStack.Screen name={t('home-page')} component={HomePage} options={{ headerShown: false }} />
-                  <SettingsStack.Screen name={t('quiz-page')} component={Quiz} options={{ headerShown: false }} />
+                  <SettingsStack.Screen name={t('home-page')} component={HomePage} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })}  />
+                  <SettingsStack.Screen name={t('quiz-page')} component={Quiz} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })} />
+                  <SettingsStack.Screen name={t('routes')} component={RoutesPage} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })} />
+                  <SettingsStack.Screen name={t('monuments-map')} component={MapPage} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })} />
+
                 </SettingsStack.Navigator>
               )}
             </Tab.Screen>
@@ -83,11 +86,11 @@ function App() {
             <Tab.Screen name={t('profile')} options={{ headerShown: false }}>
               {() => (
                 <ProfileStack.Navigator>
-                  <ProfileStack.Screen name={t('user-profile')} component={ProfilePage} />
-                  <ProfileStack.Screen name={t('up-statistics')} component={UserStatistics} />
-                  <ProfileStack.Screen name={t('up-addRoute')} component={AddRoutePage} />
-                  <ProfileStack.Screen name={t('up-userRoutes')} component={UserRoutesPage} />
-                  <ProfileStack.Screen name={t('up-translate')} component={TextDetectionComponent} />
+                  <ProfileStack.Screen name={t('user-profile')} component={ProfilePage} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })}    />
+                  <ProfileStack.Screen name={t('up-statistics')} component={UserStatistics} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })}   />
+                  <ProfileStack.Screen name={t('up-addRoute')} component={AddRoutePage} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })}   />
+                  <ProfileStack.Screen name={t('up-userRoutes')} component={UserRoutesPage} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })}   />
+                  <ProfileStack.Screen name={t('up-translate')} component={TextDetectionComponent} options={({ navigation }) => ({ headerRight: () => <HeaderButton openModal={openModal} /> })}   />
                 </ProfileStack.Navigator>
               )}
             </Tab.Screen>

@@ -223,10 +223,11 @@ const takePhoto = async () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: "#EDF5FC",
   },
   textContainer: {
     flexDirection: 'column', 
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   button: {
     margin: 10, 
@@ -256,7 +257,6 @@ cardTrans: {
   padding: 10,
   marginTop: 10,
   marginBottom: 600,
-
   borderWidth: 1,
   borderColor: '#ccc',
   backgroundColor: 'white',
