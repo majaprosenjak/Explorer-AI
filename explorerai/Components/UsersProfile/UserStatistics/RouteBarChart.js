@@ -5,23 +5,19 @@ import { BarChart } from 'react-native-chart-kit';
 const screenWidth = Dimensions.get('window').width;
 
 const RouteBarChart = ({ data }) => {
-  const labels = [
-    'J', 'F', 'M', 'A', 'M', 'J',
-    'J', 'A', 'S', 'O', 'N', 'D'
-  ];
+  const labels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
-  const monthlyData = labels.reduce((acc, label, index) => {
-    acc[index] = 0; 
-    return acc;
-  }, {});
+  const monthlyData = Array(12).fill(0);
 
   data.forEach(route => {
-    if (route.started && route.finished) {
-      const startDate = new Date(route.started.seconds * 1000 + route.started.nanoseconds / 1000000);
-      const month = startDate.getMonth(); 
-      const durationMs = route.finished.seconds * 1000 + route.finished.nanoseconds / 1000000 - (route.started.seconds * 1000 + route.started.nanoseconds / 1000000);
-      const durationMin = durationMs / (1000 * 60); 
-      monthlyData[month] += durationMin;
+    if (route.dateWalked && route.walkingTime) {
+      const { seconds, nanoseconds } = route.dateWalked;
+      const milliseconds = seconds * 1000 + nanoseconds / 1000000;
+      const date = new Date(milliseconds);
+      const month = date.getMonth(); 
+      
+      const walkingTimeMinutes = route.walkingTime / 60; 
+      monthlyData[month] += walkingTimeMinutes;
     }
   });
 
@@ -29,7 +25,7 @@ const RouteBarChart = ({ data }) => {
     labels: labels,
     datasets: [
       {
-        data: Object.values(monthlyData),
+        data: monthlyData,
       },
     ],
   };
@@ -44,9 +40,9 @@ const RouteBarChart = ({ data }) => {
         chartConfig={{
           backgroundGradientFrom: 'white',
           backgroundGradientTo: 'white',
-          decimalPlaces: 0,
+          decimalPlaces: 0, 
           color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
-          labelColor: (opacity = 0) => `rgba(200, 200, 200, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           style: {
             borderRadius: 16,
           },
@@ -63,15 +59,15 @@ const RouteBarChart = ({ data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width:'100%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
   },
   chart: {
-    width:'100%',
+    width: '100%',
     marginVertical: 8,
-    borderRadius: 16
+    borderRadius: 16,
   },
 });
 

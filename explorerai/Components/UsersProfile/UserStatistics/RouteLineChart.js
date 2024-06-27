@@ -5,27 +5,25 @@ import { LineChart } from 'react-native-chart-kit';
 const screenWidth = Dimensions.get('window').width;
 
 const RouteLineChart = ({ data }) => {
-  const monthlyData = data.reduce((acc, route) => {
-    if (route.finished && typeof route.finished === 'object' && route.finished.seconds && route.finished.nanoseconds) {
-      const timestampMs = route.finished.seconds * 1000 + route.finished.nanoseconds / 1000000;
+  const monthlyData = Array(12).fill(0);
+
+  data.forEach(route => {
+    if (route.dateWalked) {
+      const { seconds, nanoseconds } = route.dateWalked;
+      const timestampMs = seconds * 1000 + nanoseconds / 1000000;
       const date = new Date(timestampMs);
       const month = date.getMonth();
-      acc[month] = (acc[month] || 0) + 1;
+      monthlyData[month]++;
     }
-    return acc;
-  }, {});
+  });
 
-
-  const labels = [
-    'J', 'F', 'M', 'A', 'M', 'J',
-    'J', 'A', 'S', 'O', 'N', 'D'
-  ];
+  const labels = ['J', 'F', 'M', 'A', 'M', 'J','J', 'A', 'S', 'O', 'N', 'D'];
 
   const chartData = {
     labels: labels,
     datasets: [
       {
-        data: labels.map((label, index) => monthlyData[index] || 0),
+        data: monthlyData,
       },
     ],
   };
@@ -50,13 +48,12 @@ const RouteLineChart = ({ data }) => {
           propsForDots: {
             r: "6",
             strokeWidth: "2",
-            stroke: "white", 
+            stroke: "white",
           }
         }}
         bezier
         style={styles.chart}
       />
-
     </View>
   );
 };

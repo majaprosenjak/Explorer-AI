@@ -8,7 +8,7 @@ const RoutePieChart = ({ data }) => {
   const blueShades = ['#2196F3', '#64B5F6', '#90CAF9', '#BBDEFB', '#E3F2FD'];
 
   const pieChartData = data.reduce((acc, route, index) => {
-    const routeName = route.routeDetails.name;
+    const routeName = route.routeName;
     const existingRoute = acc.find(item => item.name === routeName);
 
     if (existingRoute) {
@@ -21,7 +21,7 @@ const RoutePieChart = ({ data }) => {
   }, []).map((item, index) => ({
     name: item.name,
     count: item.count,
-    color: blueShades[index % blueShades.length], 
+    color: blueShades[index % blueShades.length],
     legendFontColor: '#7F7F7F',
     legendFontSize: 15,
   }));
@@ -30,25 +30,24 @@ const RoutePieChart = ({ data }) => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.chart}>
-        <PieChart
-          data={pieChartData}
-          width={screenWidth - 40}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#fff',
-            backgroundGradientFrom: '#fff',
-            backgroundGradientTo: '#fff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="count"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-          hasLegend={false}
-        />
-
+          <PieChart
+            data={pieChartData}
+            width={screenWidth - 40}
+            height={220}
+            chartConfig={{
+              backgroundColor: '#fff',
+              backgroundGradientFrom: '#fff',
+              backgroundGradientTo: '#fff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="count"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+            hasLegend={false}
+          />
         </View>
-        
+
         <View style={styles.legendContainer}>
           {pieChartData.map((item, index) => (
             <View key={index} style={styles.legendItem}>
@@ -69,9 +68,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chart: {
-    paddingLeft:'40%'
-
-
+    paddingLeft: '40%'
   },
   legendContainer: {
     flexDirection: 'row',

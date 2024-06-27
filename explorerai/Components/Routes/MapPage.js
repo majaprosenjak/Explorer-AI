@@ -4,8 +4,9 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
-import { doc, updateDoc, increment } from 'firebase/firestore';
+import { doc, updateDoc, increment, collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
 import { firestore } from "../firebaseConfig";
+import { useUser } from '../UsersProfile/UserContext';
 import { API_KEY_GOOGLE_MAPS } from '@env';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +22,7 @@ const GOOGLE_MAPS_APIKEY = API_KEY_GOOGLE_MAPS;
 const MapPage = ({ route, navigation }) => {
 
   const { t } = useTranslation();
+  const { user } = useUser();
 
   const routeDetails = route?.params?.route || {};
   const monuments = routeDetails.monuments || [];
@@ -28,7 +30,6 @@ const MapPage = ({ route, navigation }) => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const animatedHeight = useState(new Animated.Value(60))[0];
-
   const [timer, setTimer] = useState(0);
   const timerRef = useRef(null);
 
@@ -94,27 +95,63 @@ const MapPage = ({ route, navigation }) => {
     setExpanded(!expanded);
   };
 
-  const finishWalking = async () => {
-    clearInterval(timerRef.current);
-    const walkingTime = timer;
-
+  const addRouteToUser = async (userEmail, routeDetails, walkingTime) => {
     try {
-      const routeDocRef = doc(firestore, "routes", routeDetails.id);
-      await updateDoc(routeDocRef, { walkedCounter: increment(1) });
-
-      Alert.alert(
-        t('congratulations'),
-        `${t("route-finish-message")} ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} s`,
-        //`You have completed the walk.\nTotal walking time: ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} sec`,
-        [
-          { text: 'OK', onPress: () => navigation.navigate("routes-page") },
-        ]
-      );
+      const usersCollectionRef = collection(firestore, "users");
+      const q = query(usersCollectionRef, where("email", "==", userEmail));
+      const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.empty) {
+        console.error('No user found with the specified email.');
+        return false;
+      }
+  
+      const userDoc = querySnapshot.docs[0];
+      const userDocRef = doc(firestore, "users", userDoc.id);
+      const routesWalkedCollectionRef = collection(userDocRef, "routesWalked");
+  
+      await addDoc(routesWalkedCollectionRef, {
+        routeName: routeDetails.name,
+        walkingTime: walkingTime, 
+        dateWalked: Timestamp.now() 
+      });
+  
+      return true;
     } catch (error) {
-      console.error('Error updating walkedCounter:', error);
+      console.error('Error adding route to user:', error);
+      return false;
     }
   };
 
+  const finishWalking = async () => {
+    clearInterval(timerRef.current);
+    const walkingTime = timer;
+  
+    if (user) { 
+      const success = await addRouteToUser(user, routeDetails, walkingTime);
+  
+      if (success) {
+        try {
+          const routeDocRef = doc(firestore, "routes", routeDetails.id);
+          await updateDoc(routeDocRef, { walkedCounter: increment(1) });
+  
+          console.log(`Walking time: ${walkingTime} seconds`);
+          Alert.alert(
+            t('congratulations'),
+            `${t("route-finish-message")} ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} s`,
+            [
+              { text: 'OK', onPress: () => navigation.navigate("routes-page") },
+            ]
+          );
+        } catch (error) {
+          console.error('Error updating walkedCounter for the route:', error);
+        }
+      }
+    } else {
+      console.error('User is null, cannot add route.');
+    }
+  };
+  
   const CustomMarker = ({ number }) => (
     <Svg height={50} width={30} viewBox="0 0 24 30">
       <Path

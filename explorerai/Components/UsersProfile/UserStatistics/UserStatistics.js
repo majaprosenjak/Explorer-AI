@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, StyleSheet, View } from 'react-native';
-import { collection, getDocs, query, where, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig'; 
 import RoutePieChart from './RoutePieChart';
 import RouteLineChart from './RouteLineChart';
@@ -11,8 +11,7 @@ import { useTranslation } from "react-i18next";
 const UserStatistics = () => {
   const [routesWalked, setRoutesWalked] = useState([]);
   const { user } = useUser();
-  const {t} = useTranslation();
-
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchRoutesWalked = async () => {
@@ -28,7 +27,6 @@ const UserStatistics = () => {
 
         const userDoc = querySnapshot.docs[0];
         const userId = userDoc.id;
-
         const routesWalkedRef = collection(firestore, 'users', userId, 'routesWalked');
         const routesSnapshot = await getDocs(routesWalkedRef);
 
@@ -36,29 +34,10 @@ const UserStatistics = () => {
           return;
         }
 
-        const routesList = [];
-
-        for (const doc of routesSnapshot.docs) {
-          const routeWalkedData = doc.data();
-          const routeRef = routeWalkedData.route;
-
-          if (routeRef) {
-            const routeDocSnapshot = await getDoc(routeRef);
-            const routeDocData = routeDocSnapshot.data();
-
-            if (routeDocData) {
-              routesList.push({
-                id: doc.id,
-                ...routeWalkedData,
-                routeDetails: routeDocData,
-              });
-            } else {
-              console.log('Does not exist:', routeRef.path);
-            }
-          } else {
-            console.log('Route reference missing');
-          }
-        }
+        const routesList = routesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
         setRoutesWalked(routesList);
       } catch (e) {
@@ -67,7 +46,7 @@ const UserStatistics = () => {
     };
 
     fetchRoutesWalked();
-  }, []);
+  }, [user]);
 
   return (
     <ScrollView style={styles.container}>
@@ -89,10 +68,6 @@ const UserStatistics = () => {
         <Text style={styles.yearlyText}>{t('minWalked')}</Text>
         <RouteBarChart data={routesWalked} />
       </View>
-
-      
-      
-     
     </ScrollView>
   );
 };
@@ -126,8 +101,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#FFFFFF',
     textAlign: 'center',
-
-
   }
 });
 
