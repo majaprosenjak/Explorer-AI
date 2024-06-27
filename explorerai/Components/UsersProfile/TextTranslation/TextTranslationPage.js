@@ -6,7 +6,7 @@ import axios from 'axios';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTranslation } from 'react-i18next';
 import SpeechGenerate from './SpeechGenerate';
-
+import { API_KEY_GOOGLE_VISION, API_KEY_TRANSLATE} from '@env';
 
 const TextDetectionComponent = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -25,7 +25,7 @@ const TextDetectionComponent = () => {
       }
 
       // Google Cloud Vision API key
-      const apiKey = 'API_KEY';
+      const apiKey = API_KEY_GOOGLE_VISION;
       const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
 
       // Read the image file from local URI and convert it to base64
@@ -69,7 +69,7 @@ const TextDetectionComponent = () => {
     }
 
     try {
-        const API_KEY = 'API_KEY';
+        const API_KEY = API_KEY_TRANSLATE;
         const textWithoutNewlines = detectedText.replace(/\n/g, ' ');
         const trimmedText = textWithoutNewlines.trim(); 
         console.log(trimmedText);

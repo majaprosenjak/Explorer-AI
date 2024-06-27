@@ -3,9 +3,10 @@ import { View, Button, Alert} from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
 import { connectFirestoreEmulator } from 'firebase/firestore';
+import { API_KEY_SPEECH } from '@env';
 
 
-const apiKey = 'API_KEY'; 
+const apiKey = API_KEY_SPEECH; 
 const apiUrl = 'https://api.openai.com/v1/audio/speech';
 
 const SpeechGenerate = ({ initialText }) => {

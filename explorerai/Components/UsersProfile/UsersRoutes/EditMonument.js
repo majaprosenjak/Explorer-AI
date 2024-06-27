@@ -4,7 +4,7 @@ import { updateDoc, doc } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 import MapView, { Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
-
+import { API_KEY_GOOGLE_GEOCODING } from '@env';
 
 const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => {
   const [name, setName] = useState('');
@@ -24,7 +24,7 @@ const EditMonument = ({ visible, onClose, selectedMonument, selectedRoute }) => 
   }, [selectedMonument]);
 
   const onSearchAddress = () => {
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=API`)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY_GOOGLE_GEOCODING}`)
       .then(response => response.json())
       .then(data => {
         if (data.results.length > 0) {

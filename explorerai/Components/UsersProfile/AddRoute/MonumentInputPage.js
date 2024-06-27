@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Modal, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
-
+import { API_KEY_GOOGLE_GEOCODING } from '@env';
 
 const MonumentInputPage = ({ navigation, route }) => {
   const [monumentName, setMonumentName] = useState('');
@@ -15,7 +15,7 @@ const MonumentInputPage = ({ navigation, route }) => {
 
   const onSearchAddress = () => {
     console.log(route.params.monuments)
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=API_KEY`)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY_GOOGLE_GEOCODING}`)
       .then(response => response.json())
       .then(data => {
         if (data.results.length > 0) {
