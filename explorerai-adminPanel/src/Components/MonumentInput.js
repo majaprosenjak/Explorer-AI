@@ -23,7 +23,7 @@ const MonumentInput = ({ onAddMonument }) => {
   };
 
   const onSearchAddress = () => {
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=API_KEY`)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.REACT_APP_API_KEY_GOOGLE_GEOCODING}`)
       .then(response => response.json())
       .then(data => {
         if (data.results.length > 0) {
