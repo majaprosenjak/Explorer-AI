@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from "../firebaseConfig";
+import { format } from 'date-fns';
 
 const SeasonalRoutes = () => {
   const [routes, setRoutes] = useState([]);
@@ -12,27 +13,39 @@ const SeasonalRoutes = () => {
     const fetchRoutesSeasonal = async () => {
       try {
         const routesRef = collection(firestore, 'routes');
-        const q = query(routesRef, where('seasonal', '==', true));
+        const q = query(routesRef, where('seasonalFrom', '!=', null));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          console.log('No routes available.');
+          console.log('No seasonal routes available.');
           return;
         }
 
         const fetchedRoutes = [];
+        const today = new Date();
+
         for (const doc of querySnapshot.docs) {
           const routeData = { id: doc.id, ...doc.data() };
           const monumentsSnapshot = await getDocs(collection(firestore, `routes/${doc.id}/monuments`));
           routeData.monuments = monumentsSnapshot.docs.map(monumentDoc => monumentDoc.data());
-          fetchedRoutes.push(routeData);
+
+          const seasonalFrom = new Date(routeData.seasonalFrom);
+          const seasonalTo = new Date(routeData.seasonalTo);
+
+          if (seasonalFrom <= today && today <= seasonalTo) {
+            fetchedRoutes.push({
+              ...routeData,
+              seasonalToFormatted: format(seasonalTo, "dd.MM.yyyy"),
+            });
+          }
         }
 
         setRoutes(fetchedRoutes);
       } catch (error) {
-        console.error('Error fetching routes:', error);
+        console.error('Error fetching seasonal routes:', error);
       }
     };
+
     fetchRoutesSeasonal();
   }, []);
 
@@ -40,17 +53,17 @@ const SeasonalRoutes = () => {
     <SafeAreaView style={styles.safeContainer}>
       <View style={styles.container}>
         <View style={styles.cardTitle}>
-            <Text style={styles.headerText}>Trenutno popularno - Sezonske Poti!</Text>
-            <Text style={styles.subHeaderText}>Pohiti, te poti so aktivne le določen čas!</Text>
+          <Text style={styles.promotionHeaderText}>{t("seasonal-routes-promotion-header")}</Text>
+          <Text style={styles.promotionSubHeaderText}>{t("seasonal-routes-promotion-tagline")}</Text>
         </View>
         <ScrollView>
           {routes.map(route => (
             <View key={route.id} style={styles.card}>
               <Text style={styles.routeName}>{route.name}</Text>
               <Text style={styles.routeDescription}>{route.description}</Text>
-              <Text style={styles.routeInfo}>Trajanje: {route.duration}</Text>
-              <Text style={styles.routeInfo}>Znamenitosti: {route.monuments ? route.monuments.length : 0}</Text>
-              <Text style={styles.seasonalBadge}>Aktivna do: {route.seasonalTo}</Text>
+              <Text style={styles.routeInfo}>{t("estimated-duration")} {route.duration}</Text>
+              <Text style={styles.routeInfo}>{t("ur-monuments")} {route.monuments ? route.monuments.length : 0}</Text>
+              <Text style={styles.seasonalBadge}>{t("active-until")} {route.seasonalToFormatted}</Text>
             </View>
           ))}
         </ScrollView>
@@ -67,13 +80,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  headerText: {
+  promotionHeaderText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 20,
     textAlign: "center",
   },
-  subHeaderText: {
+  promotionSubHeaderText: {
     fontSize: 16,
     marginBottom: 20,
     textAlign: "center",

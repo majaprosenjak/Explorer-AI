@@ -4,6 +4,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from "../firebaseConfig";
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 
 const RoutesPage = () => {
   const [routes, setRoutes] = useState([]);
@@ -67,7 +68,7 @@ const RoutesPage = () => {
 
     return (
       <View style={styles.monumentsContainer}>
-        <Text style={styles.monumentsHeader}>Monuments:</Text>
+        <Text style={styles.monumentsHeader}>{t("ur-monuments")}</Text>
         {monuments.map((monument, index) => (
           <View key={index} style={styles.monumentItem}>
             <Text style={styles.monumentName}>{monument.name}</Text>
@@ -82,10 +83,10 @@ const RoutesPage = () => {
             style={styles.startButton} 
             onPress={() => handleStartRoute(route)}
           >
-            <Text style={styles.startButtonText}>Start</Text>
+            <Text style={styles.startButtonText}>{t("start")}</Text>
           </Pressable>
         ) : (
-          <Text style={styles.notAvailableText}>This route is not currently available.</Text>
+          <Text style={styles.notAvailableText}>{t("route-unavailable")}</Text>
         )}
       </View>
     );
@@ -114,25 +115,25 @@ const RoutesPage = () => {
         >
           {route.seasonal && (
             <View style={styles.seasonalBadge}>
-              <Text style={styles.publicText}>Seasonal</Text>
+              <Text style={styles.publicText}>{t("seasonal")}</Text>
             </View>
           )}
           {route.published && !route.seasonal && (
             <View style={styles.publicBadge}>
-              <Text style={styles.publicText}>Public</Text>
+              <Text style={styles.publicText}>{t("public")}</Text>
             </View>
           )}
           <Text style={styles.name}>{route.name}</Text>
           <Text style={styles.description}>{route.description}</Text>
-          <Text style={styles.info}>Duration: {route.duration}</Text>
-          <Text style={styles.info}>Walked: {route.walkedCounter}</Text>
+          <Text style={styles.info}>{t("estimated-duration")} {route.duration}</Text>
+          <Text style={styles.info}>{t("walked")} {route.walkedCounter}</Text>
           {route.seasonal && (
             <View>
-              <Text style={styles.info}>Seasonal from: {route.seasonalFrom}</Text>
-              <Text style={styles.info}>Seasonal to: {route.seasonalTo}</Text>
+              <Text style={styles.info}>{t("seasonal-from")} {format(route.seasonalFrom, "dd.MM.yyyy")}</Text>
+              <Text style={styles.info}>{t("seasonal-to")} {format(route.seasonalTo, "dd.MM.yyyy")}</Text>
             </View>
           )}
-          <Text style={styles.info}>Monuments: {route.monuments ? route.monuments.length : 0}</Text>
+          <Text style={styles.info}>{t("ur-monuments")} {route.monuments ? route.monuments.length : 0}</Text>
           
           {expandedRoute === route.id && route.monuments && route.monuments.length > 0 && (
             renderMonumentsList(route.monuments, route)

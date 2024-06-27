@@ -2,23 +2,32 @@ import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import SeasonalRoutes from './SeasonalRoutes';
 import MostPopularRoute from './MostPopularRoute';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = ({ navigation }) => {
+  const { t } = useTranslation();
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <SeasonalRoutes />
 
-      <View style={styles.card}><Text style={styles.headerText}>Se nemoreš odločiti kakšno pot bi prehodil?</Text>
-        <Text style={styles.subHeaderText}>Brez strahu! Pri tem ti lahko pomagamo mi!</Text>
-        <Text style={styles.subHeaderText}>Izpolni naš kratek kviz o tem, kaj imaš rad inkako se trenutno počutiš, mi pa ti bomo 
-          predlagali kateri tip poti je zatenajbolj primeren.
-        </Text>
-        <TouchableOpacity style={styles.questionOptionsContainer} onPress={() => navigation.navigate('quiz-page')}>
-          <Text style={styles.questionOptions}>Pojdi na kviz</Text>
+      <TouchableOpacity style={styles.navigateBtn} onPress={() => navigation.navigate(t('routes'))}>
+          <Text style={styles.NavigateBtnText}>{t("all-routes")}</Text>
+      </TouchableOpacity>
+
+      <View style={styles.card}><Text style={styles.headerText}>{t("quiz-promotion-header")}</Text>
+        <Text style={styles.subHeaderText}>{t("quiz-promotion-tagline")}</Text>
+        <Text style={styles.subHeaderText}>{t("quiz-promotion-description")}</Text>
+        <TouchableOpacity style={styles.navigateBtn} onPress={() => navigation.navigate(t('quiz-page'))}>
+          <Text style={styles.NavigateBtnText}>{t("quiz-go-to-btn")}</Text>
         </TouchableOpacity>
       </View>
 
       <MostPopularRoute />
+
+      <TouchableOpacity style={styles.navigateBtn} onPress={() => navigation.navigate(t('routes'))}>
+          <Text style={styles.NavigateBtnText}>{t("all-routes")}</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -37,7 +46,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  questionOptionsContainer: {
+  navigateBtn: {
     borderRadius: 10,
     marginTop: 15,
     backgroundColor: "#007BFF",
@@ -48,13 +57,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
   },
-
-  questionOptions: {
+  NavigateBtnText: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
   },
-  
   card: {
     backgroundColor: '#dcedfc',
     borderRadius: 10,

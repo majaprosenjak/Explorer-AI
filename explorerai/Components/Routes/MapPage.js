@@ -6,6 +6,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
 import { doc, updateDoc, increment } from 'firebase/firestore';
 import { firestore } from "../firebaseConfig";
+import { API_KEY_GOOGLE_MAPS } from '@env';
+import { useTranslation } from 'react-i18next';
 
 const INITIAL_REGION = {
   latitude: 46.5547,
@@ -14,9 +16,12 @@ const INITIAL_REGION = {
   longitudeDelta: 0.05,
 };
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyDcJdWLYO_2ueX-G6D9Z-CoF_dFfbsb7rA';
+const GOOGLE_MAPS_APIKEY = API_KEY_GOOGLE_MAPS;
 
 const MapPage = ({ route, navigation }) => {
+
+  const { t } = useTranslation();
+
   const routeDetails = route?.params?.route || {};
   const monuments = routeDetails.monuments || [];
   const [totalDuration, setTotalDuration] = useState(0);
@@ -98,8 +103,9 @@ const MapPage = ({ route, navigation }) => {
       await updateDoc(routeDocRef, { walkedCounter: increment(1) });
 
       Alert.alert(
-        'Congratulations!',
-        `You have completed the walk.\nTotal walking time: ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} sec`,
+        t('congratulations'),
+        `${t("route-finish-message")} ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} s`,
+        //`You have completed the walk.\nTotal walking time: ${Math.floor(walkingTime / 60)} min ${walkingTime % 60} sec`,
         [
           { text: 'OK', onPress: () => navigation.navigate("routes-page") },
         ]
@@ -170,15 +176,15 @@ const MapPage = ({ route, navigation }) => {
 
       <View style={styles.cardsContainer}>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Monuments</Text>
+          <Text style={styles.cardTitle}>{t("monuments")}</Text>
           <Text style={styles.cardNumber}>{monuments.length}</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Walking Duration</Text>
+          <Text style={styles.cardTitle}>{t("walking-duration")}</Text>
           <Text style={styles.cardNumber}>{Math.ceil(totalDuration / 60)} min</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Total Distance</Text>
+          <Text style={styles.cardTitle}>{t("total-distance")}</Text>
           <Text style={styles.cardNumber}>{Math.ceil(totalDistance / 1000)} km</Text>
         </View>
       </View>
@@ -209,7 +215,7 @@ const MapPage = ({ route, navigation }) => {
       <View style={styles.timerContainer}>
         <Text style={styles.timerText}>{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</Text>
         <TouchableOpacity style={styles.finishButton} onPress={finishWalking}>
-          <Text style={styles.finishButtonText}>Finish</Text>
+          <Text style={styles.finishButtonText}>{t("finish")}</Text>
         </TouchableOpacity>
       </View>
     </View>

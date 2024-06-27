@@ -201,6 +201,7 @@ const RouteInputPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: "#EDF5FC",
   },
   button: {
     margin: 10,

@@ -8,8 +8,6 @@ import RouteBarChart from './RouteBarChart';
 import { useUser } from '../UserContext';
 import { useTranslation } from "react-i18next";
 
-
-
 const UserStatistics = () => {
   const [routesWalked, setRoutesWalked] = useState([]);
   const { user } = useUser();
@@ -104,6 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     width: '100%',
+    backgroundColor: "#EDF5FC",
   },
   card: {
     backgroundColor: '#FFFFFF',

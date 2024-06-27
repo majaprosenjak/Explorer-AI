@@ -131,7 +131,8 @@ const MonumentInputPage = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin:10
+    margin:10,
+    backgroundColor: "#EDF5FC",
   },
   buttonText: {
     color: 'white',

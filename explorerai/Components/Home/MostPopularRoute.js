@@ -54,18 +54,18 @@ const MostPopularRoute = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.titleCard}>
-        <Text style={styles.headerText}>Naši uporabniki vedo, kaj je najboljše</Text>
-        <Text style={styles.subHeaderText}>Preveri pot, ki je na naši strani NAJPOPULARNEJŠA</Text>
+      <View style={styles.promotionCard}>
+        <Text style={styles.promotionHeaderText}>{t("popular-routes-promotion-header")}</Text>
+        <Text style={styles.promotionSubHeaderText}>{t("popular-routes-promotion-tagline")}</Text>
       </View>
       <ScrollView>
         {mostPopularRoute && (
           <View style={styles.card}>
             <Text style={styles.routeName}>{mostPopularRoute.name}</Text>
             <Text style={styles.routeDescription}>{mostPopularRoute.description}</Text>
-            <Text style={styles.routeInfo}>Trajanje: {mostPopularRoute.duration}</Text>
-            <Text style={styles.routeInfo}>Znamenitosti: {mostPopularRoute.monuments ? mostPopularRoute.monuments.length : 0}</Text>
-            <Text style={styles.popularTag}>Najpopularnejša </Text>
+            <Text style={styles.routeInfo}>{t("estimated-duration")} {mostPopularRoute.duration}</Text>
+            <Text style={styles.routeInfo}>{t("ur-monuments")} {mostPopularRoute.monuments ? mostPopularRoute.monuments.length : 0}</Text>
+            <Text style={styles.popularBadge}>{t("most-popular")}</Text>
           </View>
         )}
       </ScrollView>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
   },
-  titleCard: {
+  promotionCard: {
     backgroundColor: '#dcedfc',
     borderRadius: 10,
     padding: 15,
@@ -102,13 +102,13 @@ const styles = StyleSheet.create({
     width: windowWidth-40,
     alignSelf: "center",
   },
-  headerText: {
+  promotionHeaderText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 20,
     textAlign: "center",
   },
-  subHeaderText: {
+  promotionSubHeaderText: {
     fontSize: 16,
     marginBottom: 20,
     textAlign: "center",
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     color: '#ff9900',
     marginTop: 5,
   },
-  popularTag: {
+  popularBadge: {
     top: 10,
     right: 10,
     backgroundColor: 'green',
