@@ -1,0 +1,66 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "majaprosenjak",
+      "name": "Maja Prosenjak",
+      "avatar_url": "https://avatars.githubusercontent.com/u/118738966?v=4",
+      "profile": "https://github.com/majaprosenjak",
+      "contributions": [
+        "code",
+        "doc",
+        "bug",
+        "example",
+        "maintenance",
+        "platform",
+        "projectManagement",
+        "review"
+      ]
+    },
+    {
+      "login": "KatarinaLipovšek",
+      "name": "Katarina Lipovšek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/119334244?v=4",
+      "profile": "https://github.com/KatarinaLipovsek",
+      "contributions": [
+        "code",
+        "doc",
+        "bug",
+        "example",
+        "maintenance",
+        "review",
+        "question",
+        "test",
+        "platform",
+        "projectManagement",
+        "review"
+      ]
+    },
+    {
+      "login": "mihajloalimpic",
+      "name": "Mihajlo Alimpić",
+      "avatar_url": "https://avatars.githubusercontent.com/u/166649403?v=4",
+      "profile": "https://github.com/mihajloalimpic",
+      "contributions": [
+        "code",
+        "doc",
+        "bug",
+        "example",
+        "maintenance",
+        "platform",
+        "projectManagement",
+        "review"
+      ]
+    }
+  ],
+  "skipCi": true,
+  "contributorsPerLine": 7,
+  "projectName": "ExplorerAI",
+  "projectOwner": "ExplorerAI",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
