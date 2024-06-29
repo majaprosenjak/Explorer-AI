@@ -6,7 +6,7 @@ ExplorerAI je mobilna aplikacija, ki združuje vse, kar potrebujete mod potovanj
 ## Vzpostavitev
 ### Mobilna aplikacija
 
-## Osnovne funkcionalnosti: 
+#### Osnovne funkcionalnosti: 
 * Reševanje kviza: Uporabniki lahko rešijo kviz, ki jim predlaga najbolj ustrezno vrsto poti.
 * Delitev rezultatov kviza: Uporabniki lahko svoje rezultate kviza delijo preko različnih aplikacij.
 * Pregled poti: Uporabniki lahko pregledajo vse poti v bazi, skupaj z njihovimi podrobnostmi.
