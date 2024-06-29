@@ -4,6 +4,8 @@
 ExplorerAI je mobilna aplikacija, ki združuje vse, kar potrebujete mod potovanjem v eni preprosti rešitvi. Ne glede na to, ali iščete nasvet, kaj si ogledati, ne veste ali potrebujete pomoč pri razumevanju tujega jezika - ExplorerAI je tu za vas!
 
 ## Funkcionalnosti 
+
+### Mobilna aplikacija
 * Reševanje kviza: Uporabniki lahko rešijo kviz, ki jim predlaga najbolj ustrezno vrsto poti.
 * Delitev rezultatov kviza: Uporabniki lahko svoje rezultate kviza delijo preko različnih aplikacij.
 * Pregled poti: Uporabniki lahko pregledajo vse poti v bazi, skupaj z njihovimi podrobnostmi.
@@ -14,6 +16,8 @@ ExplorerAI je mobilna aplikacija, ki združuje vse, kar potrebujete mod potovanj
 * Urejanje poti: Uporabniki lahko urejajo in brišejo svoje objavljene poti.
 * Prijava in registracija: Uporabniki se lahko registrirajo in prijavijo za dostop do dodatnih funkcionalnosti.
 * Večjezičnost: Aplikacijo je mogoče uporabljati v več jezikih.
+
+### Spletna aplikacija
 * Upravljanje s potmi: Administratorji lahko dodajajo, urejajo in brišejo poti v aplikaciji.
 * Dodajanje sezonskih poti: Administratorji lahko dodajajo sezonske poti z določenimi obdobji veljavnosti.
 * Pregled in brisanje uporabnikov: Administratorji lahko pregledajo in brišejo registrirane uporabnike.
