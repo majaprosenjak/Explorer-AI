@@ -1,7 +1,7 @@
 <p align="center"><img src="./Dokumentacija/EAI-logo.png" alt="ExplorerAI" title="ExplorerAI"/></p>
 
 
-![Contributors](https://img.shields.io/github/contributors/Explorer-AI/Explorer-AI)
+![Contributors](https://img.shields.io/github/contributors/Explorer-AI/explorerai)
 ## Naša ideja
 ExplorerAI je mobilna aplikacija, ki združuje vse, kar potrebujete mod potovanjem v eni preprosti rešitvi. Ne glede na to, ali iščete nasvet, kaj si ogledati, ne veste ali potrebujete pomoč pri razumevanju tujega jezika - ExplorerAI je tu za vas!
 
