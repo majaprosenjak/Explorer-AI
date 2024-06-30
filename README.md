@@ -24,10 +24,13 @@ ExplorerAI je mobilna aplikacija, ki združuje vse, kar potrebujete mod potovanj
 
 ## Vzpostavitev
 ### Mobilna aplikacija
+- QR koda za prenos mobilne aplikacije
+<img src="./Dokumentacija/QR-koda.jpg" alt="QR koda" title="QR koda" width="250" height="250"/>
 
 ### Spletna aplikacija
 Spletna aplikacija v okviru našega projekta služi kot administratorska plošča.
 - [Povezava do spletne aplikacije](https://explorerai-de956.firebaseapp.com/)
+- Prijavni podatki so navedeni v [dokumentaciji ExplorerAI](https://github.com/majaprosenjak/Explorer-AI/blob/main/Dokumentacija/dokumentacijaEAI.docx)
 
 ### Zagon projekta lokalno
 1. Odpri Git Bash terminal
@@ -57,6 +60,8 @@ npm i
 ```
 npm start
 ```
+6. Prijavni podatki so navedeni v [dokumentaciji ExplorerAI](https://github.com/majaprosenjak/Explorer-AI/blob/main/Dokumentacija/dokumentacijaEAI.docx)
+
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
