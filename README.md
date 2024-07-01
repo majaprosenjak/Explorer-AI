@@ -24,8 +24,9 @@ ExplorerAI je mobilna aplikacija, ki združuje vse, kar potrebujete mod potovanj
 
 ## Vzpostavitev
 ### Mobilna aplikacija
-- QR koda za prenos mobilne aplikacije
-<img src="./Dokumentacija/QR-koda.jpg" alt="QR koda" title="QR koda" width="250" height="250"/>
+- [Povezava do mobilne aplikacije](https://expo.dev/accounts/explorerai/projects/explorerai/builds/d2b820b4-063f-42e2-9965-e02d4fed65e3?fbclid=IwZXh0bgNhZW0CMTAAAR3ugKD3BZmzlj3X67Teh1K15JSFUe4c317J69Ys-r_d_gCoOy5U0I6Sh1U_aem_r6CtyIziIV7wtfrlS0_TAA)
+
+
 
 ### Spletna aplikacija
 Spletna aplikacija v okviru našega projekta služi kot administratorska plošča.
